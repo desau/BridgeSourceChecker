@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/indent */
 import { ChartError, RegularErrorTypes, ERROR_TYPE_BORDER, SeriousErrorTypes } from './chartDataInterface'
 import { sanitizeFilename } from '../UtilFunctions'
+import * as sources from '../../config/sources.json'
 import { promisify } from 'util'
 import { MANY_ERRORS_PATH, NO_ERRORS_PATH, FEW_ERRORS_PATH } from '../Drive/scanDataInterface'
 import { join } from 'path'
@@ -21,7 +22,7 @@ export async function saveAllErrors() {
     }
   }
 
-  const sourceDriveIDs = [...new Set(scanErrors.map(error => error.chart.source.sourceDriveID))]
+  const sourceDriveIDs = [...new Set(sources.map(source => source.sourceDriveID))]
 
   for (const sourceDriveID of sourceDriveIDs) {
     const driveErrors = scanErrors.filter(error => error.chart.source.sourceDriveID == sourceDriveID)
