@@ -6,7 +6,7 @@ Use this to download and scan charts from a set of Google Drive folders.
 
 1.) This is written in Typescript, so to run it locally, you need to have Node.js installed. Latest LTS Version should be fine: https://nodejs.org/en/download/
 
-2.) Download the code (either extract from the .zip or clone using Git)
+2.) Download the code. (either extract from the .zip or clone using Git)
 
 3.) Install dependencies by running this command in the project folder:
 ```
@@ -18,11 +18,11 @@ Downloading from Google Drive requires authentication with Google. Setting up Oa
 
 1.) Go to https://console.cloud.google.com/
 
-2.) Select the dropdown at the top and create a "new project" (name doesn't matter)
+2.) Select the dropdown at the top and create a "new project". (name doesn't matter)
 
-3.) Search at the top for "Google Drive API" and select it
+3.) Search at the top for "Google Drive API" and select it.
 
-4.) Choose the project you just created, then enable the API
+4.) Choose the project you just created, then enable the API.
 
 5.) On the left, go to Credentials -> Create Credentials -> Service account.
 
@@ -35,7 +35,7 @@ Downloading from Google Drive requires authentication with Google. Setting up Oa
 ## Adding Sources
 
 When you run the code, it will download and scan all sources defined in `config/sources.json`. The format looks like this:
-```json
+```
 [
   {
     "sourceName": "CharterA's Charts",
