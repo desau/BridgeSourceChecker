@@ -10,6 +10,7 @@ import { DriveMap, DriveChart } from '../Drive/scanDataInterface'
 import { red } from 'cli-color'
 import { SingleBar, Presets } from 'cli-progress'
 import { scanErrors } from './ScanErrors'
+import { scanSettings } from '../../config/scanConfig'
 
 export let errorBuffer: string[] = []
 
@@ -31,6 +32,8 @@ export async function scanNewDownloads(chartsToScan: DriveMap) {
   progressBar.start(totalCount, 0, { name: '' })
 
   for (const driveID of Object.keys(chartsToScan)) {
+    let driveChartCount = 0
+
     for (const filesHash of Object.keys(chartsToScan[driveID])) {
       const chartToScan = chartsToScan[driveID][filesHash]
       const chartSize = chartToScan.files.map(file => +file.size).reduce((a, b) => a + b, 0)
@@ -41,6 +44,7 @@ export async function scanNewDownloads(chartsToScan: DriveMap) {
       const newVersions = await new LibraryScanner().scanLibrary(chartToScan)
 
       if (newVersions.length != 0) {
+        driveChartCount += newVersions.length
         lastScannedName = newVersions.length > 1 ? chartToScan.files[0].name : newVersions[0].chartName
         for (const newVersion of newVersions) {
           newVersion.driveData = Object.assign({ inChartPack: newVersions.length > 1 }, chartToScan)
@@ -54,6 +58,14 @@ export async function scanNewDownloads(chartsToScan: DriveMap) {
           ...chartToScan.files.map(file => `${file.name}: ${file.webContentLink}`)
         )
       }
+    }
+
+    if (driveChartCount < scanSettings.minimumChartCount) {
+      scanErrors.push({
+        type: ErrorType.notEnoughCharts,
+        chart: chartsToScan[driveID][Object.keys(chartsToScan[driveID])[0]],
+        description: `This source has fewer than ${scanSettings.minimumChartCount} charts.`,
+      })
     }
   }
 

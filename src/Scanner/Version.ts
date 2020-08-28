@@ -43,14 +43,15 @@ export class Version {
         try {
           albumPath = join(this.filepath, file.name)
           const metadata = await sharp(albumPath).metadata()
-          if (metadata.height != 500 || metadata.width != 500) {
-            scanErrors.push({
-              type: ErrorType.albumSize,
-              chart: this.driveData,
-              chartText: this.chartName,
-              description: 'The album art is not 500x500'
-            })
-          }
+          if (metadata.height == 500 && metadata.width == 500) { continue }
+          if (metadata.height == 512 && metadata.width == 512) { continue }
+
+          scanErrors.push({
+            type: ErrorType.albumSize,
+            chart: this.driveData,
+            chartText: this.chartName,
+            description: 'The album art is not 500x500 or 512x512'
+          })
         } catch (e) { failOpen(albumPath, e) }
       }
     }

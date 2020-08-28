@@ -20,6 +20,9 @@ export interface ScanSettings {
 
   /** Instead of scanning all of `sources.json`, only scan the last X added sources */
   onlyScanLastXSources?: number
+
+  /** The minimum number of charts that each source should have. If there are fewer than this, an error is added to ScanErrors */
+  minimumChartCount: number
 }
 
 const defaultSettings: ScanSettings = {
@@ -27,7 +30,8 @@ const defaultSettings: ScanSettings = {
   downloadsFilepath: './ChartDownloads',
   maxDownloadSizeMB: 3000000000,
   rescanAllVersions: false,
-  onlyScanLastXSources: undefined
+  onlyScanLastXSources: undefined,
+  minimumChartCount: 5
 }
 
 /**

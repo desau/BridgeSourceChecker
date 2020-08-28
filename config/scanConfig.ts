@@ -15,6 +15,9 @@ export const scanSettings = getSettings({
   onlyScanLastXSources: 0,
 
   /** Files larger than this number of megabytes will not be downloaded from Google Drive (anything too large will crash when unzipping) */
-  maxDownloadSizeMB: 3000
+  maxDownloadSizeMB: 3000,
+
+  /** The minimum number of charts that each source should have. If there are fewer than this, an error is added to ScanErrors */
+  minimumChartCount: 5
 
 })

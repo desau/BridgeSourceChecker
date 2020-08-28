@@ -75,6 +75,9 @@ export enum ErrorType {
 
   /** The album art is not 500x500 */
   albumSize,
+
+  /** The source has fewer than scanSettings.minimumChartCount */
+  notEnoughCharts
 }
 
 export interface ChartError {
