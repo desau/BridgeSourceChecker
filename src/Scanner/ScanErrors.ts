@@ -22,9 +22,11 @@ export async function saveAllErrors() {
     }
   }
 
-  const sourceDriveIDs = [...new Set(sources.map(source => source.sourceDriveID))]
+  const scannedSources = sources.slice(sources.length - scanSettings.onlyScanLastXSources, sources.length)
+  const sourceDriveIDs = [...new Set(scannedSources.map(source => source.sourceDriveID))]
 
   for (const sourceDriveID of sourceDriveIDs) {
+    const thisSource = scannedSources.find(source => source.sourceDriveID == sourceDriveID)
     const driveErrors = scanErrors.filter(error => error.chart.source.sourceDriveID == sourceDriveID)
     let driveErrorText = ''
 
@@ -50,7 +52,7 @@ export async function saveAllErrors() {
       errorFolder = FEW_ERRORS_PATH
     }
 
-    const errorPath = join(errorFolder, sanitizeFilename(driveErrors[0].chart.source.sourceName) + '.txt')
+    const errorPath = join(errorFolder, sanitizeFilename(thisSource.sourceName) + '.txt')
 
     await writeFile(errorPath, driveErrorText, { flag: 'a' })
   }
