@@ -36,7 +36,7 @@ export async function saveAllErrors() {
         driveErrorText += headerText + errorText + '\n\n'
       }
 
-      const errorPath = join(ERRORS_PATH, sanitizeFilename(driveErrors[0].chart.source.sourceName.replace(/\s/g, '')) + '.txt')
+      const errorPath = join(ERRORS_PATH, sanitizeFilename(driveErrors[0].chart.source.sourceName) + '.txt')
 
       await writeFile(errorPath, driveErrorText, { flag: 'a' })
     }
