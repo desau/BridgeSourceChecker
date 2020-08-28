@@ -9,7 +9,7 @@ import { isNumber, isBoolean, lower, getEncoding, removeStyleTags, hasChartExten
 import { failOpen } from '../../ErrorFunctions'
 import { DriveChart } from '../../Drive/scanDataInterface'
 import { scanErrors } from '../ScanErrors'
-import { ErrorType, defaultMetadata } from '../chartDataInterface'
+import { RegularErrorTypes, defaultMetadata, SeriousErrorTypes } from '../chartDataInterface'
 
 /**
  * Constructs a `SongMetadata` object.
@@ -46,7 +46,7 @@ export class MetadataFactory {
 
     if (this.iniFile.song == undefined) {
       scanErrors.push({
-        type: ErrorType.invalidMetadata,
+        type: SeriousErrorTypes.invalidMetadata,
         chart: this.driveChart,
         description: `No [Song] section in song.ini`
       })
@@ -71,7 +71,7 @@ export class MetadataFactory {
       this.setIniAtFilepath(chartPath, true)
     } else {
       scanErrors.push({
-        type: ErrorType.noMetadata,
+        type: SeriousErrorTypes.noMetadata,
         chart: this.driveChart,
         description: `Files: [${this.files.map(file => file.name).join()}]`
       })
@@ -93,7 +93,7 @@ export class MetadataFactory {
         lastIniPath = join(this.filepath, file.name)
         if (!hasIniName(file.name)) {
           scanErrors.push({
-            type: ErrorType.invalidIni,
+            type: SeriousErrorTypes.invalidIni,
             chart: this.driveChart,
             description: `File: [${file.name}]`
           })
@@ -109,7 +109,7 @@ export class MetadataFactory {
 
     if (iniCount > 1) {
       scanErrors.push({
-        type: ErrorType.multipleIniFiles,
+        type: SeriousErrorTypes.multipleIniFiles,
         chart: this.driveChart,
         description: `Files: [${this.files.map(file => file.name).filter(file => hasIniExtension(file)).join()}]`
       })
@@ -156,7 +156,7 @@ export class MetadataFactory {
     } catch (e) {
       failOpen(fullPath, e)
       scanErrors.push({
-        type: ErrorType.accessFailure,
+        type: SeriousErrorTypes.accessFailure,
         chart: this.driveChart,
         description: `File: [${basename(fullPath)}]`
       })
@@ -168,7 +168,7 @@ export class MetadataFactory {
       encoding = getEncoding(fullPath, buffer)
     } catch (e) {
       scanErrors.push({
-        type: ErrorType.badEncoding,
+        type: SeriousErrorTypes.badEncoding,
         chart: this.driveChart,
         description: `The detected encoding of [${basename(fullPath)}] was [${e.message}]`
       })
@@ -180,7 +180,7 @@ export class MetadataFactory {
     if (this.iniFile[$Errors] != undefined) {
       for (const err of this.iniFile[$Errors]) {
         scanErrors.push({
-          type: ErrorType.invalidIniLine,
+          type: RegularErrorTypes.invalidIniLine,
           chart: this.driveChart,
           description: err.message
         })
@@ -264,7 +264,7 @@ export class MetadataFactory {
       const int = Math.round(num)
       if (int != num) {
         scanErrors.push({
-          type: ErrorType.invalidIniLine,
+          type: RegularErrorTypes.invalidIniLine,
           chart: this.driveChart,
           description: `song.ini value of [${prefix + iniField}] (${num}) is not an integer`
         })

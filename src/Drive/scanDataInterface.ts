@@ -42,7 +42,10 @@ export interface DriveFile {
   size: string
 }
 
-export const ERRORS_PATH = join('.', 'ScanErrors')
 export const DRIVE_SCAN_DATA_PATH = join('.', 'ScanData', 'driveScanData.json')
 export const VERSIONS_TO_SCAN_PATH = join('.', 'ScanData', 'versionsToScan.json')
 export const VERSIONS_TO_REMOVE_PATH = join('.', 'ScanData', 'versionsToRemove.json')
+
+export const MANY_ERRORS_PATH = join('.', 'ScanErrors', 'ManyErrors')
+export const FEW_ERRORS_PATH = join('.', 'ScanErrors', 'FewErrors')
+export const NO_ERRORS_PATH = join('.', 'ScanErrors', 'NoErrors')

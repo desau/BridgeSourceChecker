@@ -14,7 +14,7 @@ import { getDownloadStream } from '../Drive/DriveAdapter'
 import { SingleBar, MultiBar, Presets } from 'cli-progress'
 import { red } from 'cli-color'
 import * as readline from 'readline-sync'
-import { log, sanitizeFilename } from '../UtilFunctions'
+import { log, sanitizeFilename, hasVideoExtension } from '../UtilFunctions'
 import * as mkdirp from 'mkdirp'
 import { randomBytes } from 'crypto'
 import { scanSettings } from '../../config/scanConfig'
@@ -111,6 +111,7 @@ class ChartDownloader {
   async download() {
 
     for (const file of this.versionToScan.files) {
+      if (hasVideoExtension(file.name)) { continue }
       const bar = this.progressBar.create(Number(file.size), 0, { name: file.name })
       await this.requestDownload(file, bar)
     }

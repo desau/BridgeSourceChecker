@@ -23,6 +23,9 @@ export interface ScanSettings {
 
   /** The minimum number of charts that each source should have. If there are fewer than this, an error is added to ScanErrors */
   minimumChartCount: number
+
+  /** If the number of errors in a source is greater than or equal to this, it is put in the "ManyErrors" folder instead of the "FewErrors" folder */
+  seriousErrorThreshold: number
 }
 
 const defaultSettings: ScanSettings = {
@@ -31,7 +34,8 @@ const defaultSettings: ScanSettings = {
   maxDownloadSizeMB: 3000000000,
   rescanAllVersions: false,
   onlyScanLastXSources: undefined,
-  minimumChartCount: 5
+  minimumChartCount: 5,
+  seriousErrorThreshold: 3
 }
 
 /**

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import * as fs from 'fs'
-import { ErrorType, ChartData } from './chartDataInterface'
+import { ChartData, SeriousErrorTypes } from './chartDataInterface'
 import { Version } from './Version'
 import { lower, hasChartExtension, hasChartName, hasAudioExtension, hasAudioName, hasAlbumName, hasBackgroundName, hasImageExtension, hasIniExtension, hasVideoExtension, getMainChart } from '../UtilFunctions'
 import { MetadataFactory } from './Util/MetadataFactory'
@@ -60,7 +60,7 @@ export class VersionFactory {
           albumCount++
         } else if (!hasBackgroundName(file.name)) {
           scanErrors.push({
-            type: ErrorType.invalidImage,
+            type: SeriousErrorTypes.invalidImage,
             chart: this.driveChart,
             chartText: this.chartName,
             description: `[${file.name}] is not an album or background image.`
@@ -71,7 +71,7 @@ export class VersionFactory {
 
     if (albumCount > 1) {
       scanErrors.push({
-        type: ErrorType.multipleAlbums,
+        type: SeriousErrorTypes.multipleAlbums,
         chart: this.driveChart,
         chartText: this.chartName,
         description: `There are multiple album art image files.`
@@ -92,7 +92,7 @@ export class VersionFactory {
         chartCount++
         if (!hasChartName(file.name)) {
           scanErrors.push({
-            type: ErrorType.invalidChart,
+            type: SeriousErrorTypes.invalidChart,
             chart: this.driveChart,
             chartText: this.chartName,
             description: `[${file.name}] is not named "notes".`
@@ -103,7 +103,7 @@ export class VersionFactory {
 
     if (chartCount == 0) {
       scanErrors.push({
-        type: ErrorType.noChart,
+        type: SeriousErrorTypes.noChart,
         chart: this.driveChart,
         chartText: this.chartName,
         description: 'There is no .chart/.mid file.'
@@ -112,7 +112,7 @@ export class VersionFactory {
 
     if (chartCount > 1) {
       scanErrors.push({
-        type: ErrorType.multipleCharts,
+        type: SeriousErrorTypes.multipleCharts,
         chart: this.driveChart,
         chartText: this.chartName,
         description: 'There is more than one .chart/.mid file.'
@@ -136,7 +136,7 @@ export class VersionFactory {
 
         if (!hasAudioName(file.name)) {
           scanErrors.push({
-            type: ErrorType.invalidAudio,
+            type: SeriousErrorTypes.invalidAudio,
             chart: this.driveChart,
             chartText: this.chartName,
             description: `[${file.name}] is not a valid audio stem name.`
@@ -147,7 +147,7 @@ export class VersionFactory {
 
     if (audioCount == 0) {
       scanErrors.push({
-        type: ErrorType.noAudio,
+        type: SeriousErrorTypes.noAudio,
         chart: this.driveChart,
         chartText: this.chartName,
         description: 'There are no audio files.'
@@ -170,7 +170,7 @@ export class VersionFactory {
       if (hasVideoExtension(file.name)) { continue }
 
       scanErrors.push({
-        type: ErrorType.extraFile,
+        type: SeriousErrorTypes.extraFile,
         chart: this.driveChart,
         chartText: this.chartName,
         description: `[${file.name}] is not interpreted by Clone Hero.`
@@ -184,7 +184,7 @@ export class VersionFactory {
       if (hasAudioExtension(file.name)) {
         if (audioFileNames.includes(justName)) {
           scanErrors.push({
-            type: ErrorType.extraFile,
+            type: SeriousErrorTypes.extraFile,
             chart: this.driveChart,
             chartText: this.chartName,
             description: `There is more than one [${justName}] audio file.`
@@ -195,7 +195,7 @@ export class VersionFactory {
       } else if (!hasChartExtension(file.name)) {
         if (otherFileNames.includes(justName)) {
           scanErrors.push({
-            type: ErrorType.extraFile,
+            type: SeriousErrorTypes.extraFile,
             chart: this.driveChart,
             chartText: this.chartName,
             description: `There is more than one [${justName}] file.`
@@ -225,7 +225,7 @@ export class VersionFactory {
         mainChartData = (mainChart == file ? newChartData : mainChartData)
       } catch(err) {
         scanErrors.push({
-          type: ErrorType.badChart,
+          type: SeriousErrorTypes.badChart,
           chart: this.driveChart,
           chartText: this.chartName,
           description: `Failed to read ChartData from [${file.name}]; it may not be formatted correctly.`

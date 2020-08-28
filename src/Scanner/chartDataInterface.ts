@@ -1,35 +1,46 @@
 import { DriveChart } from '../Drive/scanDataInterface'
 
-export enum ErrorType {
-  /** Folder in library contains no files or folders */
-  emptyFolder,
-
-  /** Folder in library contains both files and folders */
-  filesFolders,
-
-  /** Song folder contains no audio file */
-  noAudio,
-
-  /** Song folder contains an incorrectly named audio file */
-  invalidAudio,
-
-  /** Song folder contains no chart file */
-  noChart,
-
-  /** Song folder contains an incorrectly named chart file */
-  invalidChart,
-
-  /** Song folder contains a chart file that could not be scanned correctly */
-  badChart,
-
-  /** Song folder contains an incorrectly named ini file */
-  invalidIni,
-
+export enum RegularErrorTypes {
   /** Song folder contains an .ini file with an incorrectly formatted line */
   invalidIniLine,
 
-  /** Song folder contains an incorrectly named image file */
-  invalidImage,
+  /** Song is an exact duplicate of another song */
+  duplicate,
+
+  /** A metadata field is incorrect */
+  metadataFix,
+
+  /** The album art is not 500x500 or 512x512 */
+  albumSize,
+
+  /** delay property in song.ini is not zero */
+  nonzeroDelay
+}
+
+export const ERROR_TYPE_BORDER = 5 // Number of elements in RegularErrorTypes
+
+export enum SeriousErrorTypes {
+
+  /** The source has fewer than scanSettings.minimumChartCount */
+  notEnoughCharts = 5, // different value from RegularErrorTypes
+
+  /** The chart contains broken notes */
+  brokenNotes,
+
+  /** The chart has no sections */
+  noSections,
+
+  /** The chart has no starpower */
+  noStarpower,
+
+  /** The chart is the default 120bpm */
+  defaultBPM,
+
+  /** Filesystem refused to provide access to chart files */
+  accessFailure,
+
+  /** Song folder contains a file that CH does not interpret */
+  extraFile,
 
   /** Song folder contains no metadata */
   noMetadata,
@@ -46,43 +57,40 @@ export enum ErrorType {
   /** Song folder contains more than one album image file */
   multipleAlbums,
 
-  /** Song folder contains a file that CH does not interpret */
-  extraFile,
-
-  /** Song is an exact duplicate of another song */
-  duplicate,
-
-  /** Filesystem refused to provide access to chart files */
-  accessFailure,
+  /** Song folder contains an incorrectly named ini file */
+  invalidIni,
 
   /** Song metadata file has incompatible text encoding */
   badEncoding,
 
-  /** A metadata field is incorrect */
-  metadataFix,
+  /** Song folder contains an incorrectly named image file */
+  invalidImage,
 
-  /** The chart contains broken notes */
-  brokenNotes,
+  /** Song folder contains no audio file */
+  noAudio,
 
-  /** The chart has no sections */
-  noSections,
+  /** Song folder contains an incorrectly named audio file */
+  invalidAudio,
 
-  /** The chart has no starpower */
-  noStarpower,
+  /** Song folder contains no chart file */
+  noChart,
 
-  /** The chart is the default 120bpm */
-  defaultBPM,
+  /** Song folder contains an incorrectly named chart file */
+  invalidChart,
 
-  /** The album art is not 500x500 */
-  albumSize,
+  /** Song folder contains a chart file that could not be scanned correctly */
+  badChart,
 
-  /** The source has fewer than scanSettings.minimumChartCount */
-  notEnoughCharts
+  /** Folder in library contains no files or folders */
+  emptyFolder,
+
+  /** Folder in library contains both files and folders */
+  filesFolders
 }
 
 export interface ChartError {
   /** The type of issue that occured */
-  type: ErrorType
+  type: RegularErrorTypes | SeriousErrorTypes
 
   /** The `DriveChart` context of the chart with this issue */
   chart: DriveChart

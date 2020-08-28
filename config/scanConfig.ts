@@ -9,15 +9,17 @@ export const scanSettings = getSettings({
   downloadsFilepath: './ChartDownloads',
 
   /** Scan all charts detected in sources, even if they have already been scanned before (may add duplicate lines to ScanErrors) */
-  rescanAllVersions: false,
+  rescanAllVersions: true,
 
   /** Instead of scanning all of sources.json, only scan the last X added sources (use 0 to scan all sources) */
-  onlyScanLastXSources: 0,
+  onlyScanLastXSources: 5,
 
   /** Files larger than this number of megabytes will not be downloaded from Google Drive (anything too large will crash when unzipping) */
   maxDownloadSizeMB: 3000,
 
   /** The minimum number of charts that each source should have. If there are fewer than this, an error is added to ScanErrors */
-  minimumChartCount: 5
+  minimumChartCount: 5,
 
+  /** If the number of errors in a source is greater than or equal to this, it is put in the "ManyErrors" folder instead of the "FewErrors" folder */
+  seriousErrorThreshold: 3
 })

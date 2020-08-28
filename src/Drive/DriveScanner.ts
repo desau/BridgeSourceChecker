@@ -4,6 +4,7 @@ import { yellow } from 'cli-color'
 import { log, lower } from '../UtilFunctions'
 import { DriveMap, DriveSource } from './scanDataInterface'
 import { scanSettings } from '../../config/scanConfig'
+import * as cli from 'cli-color'
 
 
 export class DriveScanner {
@@ -26,7 +27,7 @@ export class DriveScanner {
       this.sources = this.sources.slice(this.sources.length - scanSettings.onlyScanLastXSources, this.sources.length)
     }
     for (const source of this.sources) {
-      log.info(`Scanning [${source.sourceName}]...`)
+      log.info(cli.green(`Scanning [${source.sourceName}]...`))
       this.currentSource = source
       this.results[this.currentSource.sourceDriveID] = {}
       if (source.isDriveFileSource) {
@@ -47,7 +48,7 @@ export class DriveScanner {
     const items = await readDriveFolder(folderID)
     if (items.length == 0) {
       // Don't save these to file, since they appear on every rescan
-      log.info(`[emptyFolder] "${folderName}" at https://drive.google.com/drive/folders/${folderID}`)
+      log.info(cli.yellow(`[emptyFolder] "${folderName}" at https://drive.google.com/drive/folders/${folderID}`))
     }
     const files: DriveFileResponse[] = []
     for (const item of items) {

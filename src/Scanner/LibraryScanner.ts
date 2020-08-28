@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import { join, basename } from 'path'
 import * as util from 'util'
-import { ErrorType } from './chartDataInterface'
+import { SeriousErrorTypes } from './chartDataInterface'
 import { VersionFactory } from './VersionFactory'
 import { Version } from './Version'
 import { failScan, failRead } from '../ErrorFunctions'
@@ -61,11 +61,13 @@ export async function scanNewDownloads(chartsToScan: DriveMap) {
     }
 
     if (driveChartCount < scanSettings.minimumChartCount) {
-      scanErrors.push({
-        type: ErrorType.notEnoughCharts,
-        chart: chartsToScan[driveID][Object.keys(chartsToScan[driveID])[0]],
-        description: `This source has fewer than ${scanSettings.minimumChartCount} charts.`,
-      })
+      if (chartsToScan[driveID][Object.keys(chartsToScan[driveID])[0]] != undefined) {
+        scanErrors.push({
+          type: SeriousErrorTypes.notEnoughCharts,
+          chart: chartsToScan[driveID][Object.keys(chartsToScan[driveID])[0]],
+          description: `This source has fewer than ${scanSettings.minimumChartCount} charts.`,
+        })
+      }
     }
   }
 
@@ -145,7 +147,7 @@ class LibraryScanner {
     if (hasFolders) {
       if (hasFiles) {
         scanErrors.push({
-          type: ErrorType.filesFolders,
+          type: SeriousErrorTypes.filesFolders,
           chart: driveChart,
           chartText: basename(filepath),
           description: `There are both files and folders in this directory: [${files.map(file => file.name).join()}]`
@@ -166,7 +168,7 @@ class LibraryScanner {
    */
   private handleEmptyFolder(filepath: string, driveChart: DriveChart) {
     scanErrors.push({ // Add `emptyFolder` issue if the folder was not deleted
-      type: ErrorType.emptyFolder,
+      type: SeriousErrorTypes.emptyFolder,
       chart: driveChart,
       chartText: basename(filepath),
       description: 'There are no files in this folder.'

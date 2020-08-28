@@ -2,7 +2,7 @@
 import * as fs from 'fs'
 import { join } from 'path'
 import * as sharp from 'sharp'
-import { SongMetadata, ChartData, ErrorType } from './chartDataInterface'
+import { SongMetadata, ChartData, RegularErrorTypes, SeriousErrorTypes } from './chartDataInterface'
 import { DriveChart } from '../Drive/scanDataInterface'
 import { scanErrors } from './ScanErrors'
 import { failOpen } from '../ErrorFunctions'
@@ -47,7 +47,7 @@ export class Version {
           if (metadata.height == 512 && metadata.width == 512) { continue }
 
           scanErrors.push({
-            type: ErrorType.albumSize,
+            type: RegularErrorTypes.albumSize,
             chart: this.driveData,
             chartText: this.chartName,
             description: 'The album art is not 500x500 or 512x512'
@@ -63,7 +63,7 @@ export class Version {
 
     if (cd.hasBrokenNotes) {
       scanErrors.push({
-        type: ErrorType.brokenNotes,
+        type: SeriousErrorTypes.brokenNotes,
         chart: this.driveData,
         chartText: this.chartName,
         description: 'This chart contains broken notes.'
@@ -72,7 +72,7 @@ export class Version {
 
     if (!cd.hasSections) {
       scanErrors.push({
-        type: ErrorType.noSections,
+        type: SeriousErrorTypes.noSections,
         chart: this.driveData,
         chartText: this.chartName,
         description: 'This chart doesn\'t have any sections.'
@@ -81,7 +81,7 @@ export class Version {
 
     if (!cd.hasStarPower) {
       scanErrors.push({
-        type: ErrorType.noStarpower,
+        type: SeriousErrorTypes.noStarpower,
         chart: this.driveData,
         chartText: this.chartName,
         description: 'This chart doesn\'t have any star power.'
@@ -90,7 +90,7 @@ export class Version {
 
     if (cd.is120) {
       scanErrors.push({
-        type: ErrorType.defaultBPM,
+        type: SeriousErrorTypes.defaultBPM,
         chart: this.driveData,
         chartText: this.chartName,
         description: 'If this song is not 120bpm, it wasn\'t tempo-mapped correctly.'
@@ -99,10 +99,19 @@ export class Version {
 
     if (this.driveData.source.setlistIcon != undefined && this.metadata.icon != this.driveData.source.setlistIcon) {
       scanErrors.push({
-        type: ErrorType.metadataFix,
+        type: RegularErrorTypes.metadataFix,
         chart: this.driveData,
         chartText: this.chartName,
         description: `icon [${m.icon}] should be [${this.driveData.source.setlistIcon}]`
+      })
+    }
+
+    if (m.delay != 0) {
+      scanErrors.push({
+        type: RegularErrorTypes.nonzeroDelay,
+        chart: this.driveData,
+        chartText: this.chartName,
+        description: 'The delay property in the song.ini is not zero.'
       })
     }
   }
