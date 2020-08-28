@@ -1,10 +1,8 @@
 # Private keys
-config/**
+Config/service_account_key.json
 
 # Temp directory
-chartDownloads/
-oldChartDownloads/
-HTMLresponses/
+ChartDownloads/
 
 # Logs
 logs
@@ -62,12 +60,5 @@ typings/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
-.env
-
 # next.js build output
 .next
-scanData/driveScanData.json
-scanData/oldDownloadMap.json
-scanData/versionsToRemove.json
-scanData/versionsToScan.json
