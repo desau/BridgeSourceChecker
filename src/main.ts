@@ -6,6 +6,9 @@ import * as dotenv from 'dotenv'
 import { DriveMap } from './Drive/scanDataInterface'
 import { DriveSync } from './Drive/DriveSync'
 import { log } from './UtilFunctions'
+import { ChartsDownloader } from './Download/ChartDownloader'
+import { scanNewDownloads } from './Scanner/LibraryScanner'
+import { saveAllErrors, scanErrors, getErrorText } from './Scanner/ScanErrors'
 dotenv.config()
 
 void main()
@@ -19,14 +22,18 @@ async function main() {
 
   try {
     versionsToScan = await new DriveSync().scanSources()
-    console.log(versionsToScan)
 
-    // const downloader = new ChartsDownloader()
-    // await downloader.downloadCharts(versionsToScan)
-    // downloader.saveVersionsToScanJson(versionsToScan)
-  } catch (err) { failRead('./scanData/', err); return }
+    const downloader = new ChartsDownloader()
+    await downloader.downloadCharts(versionsToScan)
+    downloader.saveVersionsToScanJson(versionsToScan)
+
+  } catch (err) { failRead('ScanData/', err); return }
 
   try {
-    // TODO: scan downloaded charts
+    await scanNewDownloads(versionsToScan)
   } catch (err) { log.error(`Scan process was unable to properly finish.\n`, err) }
+
+  try {
+    await saveAllErrors()
+  } catch (err) { log.error(`Failed to save errors to a file:\n`, scanErrors.map(error => getErrorText(error)).join('\n\n')) }
 }

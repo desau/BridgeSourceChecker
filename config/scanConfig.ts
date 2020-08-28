@@ -1,4 +1,4 @@
-import { getSettings, LogLevel } from '../src/Models/ScanSettings.model'
+import { getSettings, LogLevel } from '../src/ScanSettings'
 
 export const scanSettings = getSettings({
 

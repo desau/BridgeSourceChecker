@@ -3,20 +3,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import * as fs from 'fs'
-import { parse, join } from 'path'
-import { promisify } from 'util'
+import { parse } from 'path'
 import * as cli from 'cli-color'
-import { failWrite } from './ErrorFunctions'
 import { randomBytes } from 'crypto'
 import DefaultLogger from 'loglevelnext'
-import { ERRORS_PATH } from './Drive/scanDataInterface'
 import { scanSettings } from '../config/scanConfig'
 const sanitize = require('sanitize-filename')
 const detect = require('charset-detector')
-
-const access = promisify(fs.access)
-const writeFile = promisify(fs.writeFile)
-const readFile = promisify(fs.readFile)
 
 export const log = DefaultLogger.create({ name: 'logger', level: scanSettings.logLevel })
 
@@ -198,41 +191,6 @@ export function removeStyleTags(text: string) {
     newText = newText.replace(/<\s*[^>]+>(.*)<\s*\/\s*[^>]+>/g, '$1')
   } while (newText != oldText)
   return newText
-}
-
-/**
- * Saves each error in `errors` to `sourceName`.txt
- */
-export async function saveErrors(sourceName: string, folderName: string, folderID: string, errors: string[]) {
-  const headerText = `["${folderName}" at https://drive.google.com/drive/folders/${folderID}]`
-  const errorText = errors.join('\n')
-
-  const errorPath = join(ERRORS_PATH, sanitizeFilename(sourceName.replace(/\s/g, '')) + '.txt')
-
-  try {
-    await access(errorPath, fs.constants.F_OK)
-  } catch (err) {
-    if ((err as NodeJS.ErrnoException).code == 'ENOENT') {
-      try {
-        await writeFile(errorPath, '')
-        console.log(`Created "${errorPath}"`)
-      } catch (err) { failWrite(errorPath, err) }
-    }
-  }
-
-  try {
-    let fileText = await readFile(errorPath, { encoding: 'utf8' })
-    if (fileText.includes(headerText)) {
-      fileText = fileText.replace(headerText, `${headerText}\n${errorText}`)
-    } else {
-      fileText += `${fileText == '' ? '' : '\n\n'}${headerText}\n${errorText}`
-    }
-
-    await writeFile(errorPath, fileText)
-  } catch (err) {
-    failWrite(errorPath, err)
-    console.error(`\n${headerText}\n${errorText}\n`)
-  }
 }
 
 /**
