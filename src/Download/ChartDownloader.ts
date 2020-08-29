@@ -172,6 +172,7 @@ class ChartDownloader {
 
   private async modifyFileModifiedTime(filePath: string, time: Date) {
     try {
+      await new Promise<void>(resolve => setTimeout(() => resolve(), 200)) // Renaming can fail if started too soon after the file was created??
       const fd = await open(filePath, 'r+')
       await futimes(fd, time, time)
       await close(fd)
