@@ -16,7 +16,6 @@ import { red } from 'cli-color'
 import * as readline from 'readline-sync'
 import { log, sanitizeFilename, hasVideoExtension } from '../UtilFunctions'
 import * as mkdirp from 'mkdirp'
-import { randomBytes } from 'crypto'
 import { scanSettings } from '../../config/scanConfig'
 import { readFileSync, writeFileSync } from 'jsonfile'
 
@@ -78,7 +77,7 @@ class ChartDownloader {
 
   constructor(private versionToScan: DriveChart) {
     try {
-      this.createDownloadFolder(sanitizeFilename(versionToScan.source.sourceName))
+      this.createDownloadFolder(versionToScan)
     } catch (err) { failWrite('Failed to create download folder', err); throw new Error() }
     this.progressBar = new MultiBar({
       barsize: 60,
@@ -91,15 +90,15 @@ class ChartDownloader {
    * Creates a download folder in `scanSettings.downloadsFilepath`/`groupFolderName`/chart_...
    * @throws an exception if this fails.
    */
-  private createDownloadFolder(groupFolderName: string) {
-    const groupPath = join(scanSettings.downloadsFilepath, groupFolderName)
-    mkdirp.sync(groupPath)
+  private createDownloadFolder(versionToScan: DriveChart) {
+    const groupFolderName = sanitizeFilename(versionToScan.source.sourceName)
+    const chartFolderName = sanitizeFilename(versionToScan.isArchive ? versionToScan.files[0].name : versionToScan.folderName)
+    this.destinationFolder = join(scanSettings.downloadsFilepath, groupFolderName, chartFolderName)
+    while (fs.existsSync(this.destinationFolder)) {
+      this.destinationFolder += '_'
+    }
 
-    do {
-      this.destinationFolder = join(groupPath, `chart_${randomBytes(6 / 2).toString('hex')}`)
-    } while (fs.existsSync(this.destinationFolder))
-
-    fs.mkdirSync(this.destinationFolder)
+    mkdirp.sync(this.destinationFolder)
   }
 
   /**
