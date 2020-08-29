@@ -5,6 +5,9 @@ import { promisify } from 'util'
 import { log } from '../UtilFunctions'
 
 const mkdir = promisify(fs.mkdir)
+const open = promisify(fs.open)
+const futimes = promisify(fs.futimes)
+const close = promisify(fs.close)
 
 /**
  * Extracts a .rar archive found at `sourceFile` and puts the extracted results in `destinationFolder`.
@@ -36,5 +39,18 @@ export async function extractRar(sourceFile: string, destinationFolder: string) 
 
   if (extractResult[0].state == 'FAIL') {
     throw new Error(`${extractResult[0].reason}: ${extractResult[0].msg}`)
+  }
+
+  // Set file modification times (because unrarjs didn't feel like handling that automatically)
+  const headers = fileList[1].fileHeaders
+  for (const header of headers) {
+    try {
+      const fd = await open(join(destinationFolder, header.name), 'r+')
+      const time = new Date(header.time)
+      await futimes(fd, time, time)
+      await close(fd)
+    } catch (e) {
+      throw new Error(`Failed to update the last modified times:\n${e}`)
+    }
   }
 }
