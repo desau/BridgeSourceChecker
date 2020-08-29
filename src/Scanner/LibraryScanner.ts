@@ -48,7 +48,8 @@ export async function scanNewDownloads(chartsToScan: DriveMap) {
         lastScannedName = newVersions.length > 1 ? chartToScan.files[0].name : newVersions[0].chartName
         for (const newVersion of newVersions) {
           newVersion.driveData = Object.assign({ inChartPack: newVersions.length > 1 }, chartToScan)
-          await newVersion.checkAlbumArt()
+          // Commented out for testing
+          // await newVersion.checkAlbumArt()
           newVersion.addAdditionalErrors()
         }
       } else {

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/indent */
 import { ChartError, RegularErrorTypes, ERROR_TYPE_BORDER, SeriousErrorTypes } from './chartDataInterface'
-import { sanitizeFilename } from '../UtilFunctions'
+import { sanitizeFilename, log } from '../UtilFunctions'
 import * as sources from '../../config/sources.json'
 import { promisify } from 'util'
 import { MANY_ERRORS_PATH, NO_ERRORS_PATH, FEW_ERRORS_PATH } from '../Drive/scanDataInterface'
@@ -54,6 +54,7 @@ export async function saveAllErrors() {
 
     const errorPath = join(errorFolder, sanitizeFilename(thisSource.sourceName) + '.txt')
 
+    log.info(`Writing to [${errorPath}]`)
     await writeFile(errorPath, driveErrorText, { flag: 'a' })
   }
 }
