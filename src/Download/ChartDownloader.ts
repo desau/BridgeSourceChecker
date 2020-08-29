@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
@@ -21,6 +22,9 @@ import { readFileSync, writeFileSync } from 'jsonfile'
 
 // Asyncification
 const unlink = promisify(fs.unlink)
+const open = promisify(fs.open)
+const futimes = promisify(fs.futimes)
+const close = promisify(fs.close)
 
 export class ChartsDownloader {
   /**
@@ -161,9 +165,19 @@ class ChartDownloader {
       })
 
       downloadStream.once('end', () => {
-        resolve()
+        void this.modifyFileModifiedTime(filePath, new Date(file.modifiedTime)).then(() => resolve())
       })
     })
+  }
+
+  private async modifyFileModifiedTime(filePath: string, time: Date) {
+    try {
+      const fd = await open(filePath, 'r+')
+      await futimes(fd, time, time)
+      await close(fd)
+    } catch (e) {
+      throw new Error(`Failed to update the last modified time:\n${e}`)
+    }
   }
 
   /**
