@@ -59,7 +59,7 @@ export class DriveScanner {
     }
 
     if (this.appearsToBeChartFolder(files.map(file => file.fullFileExtension))) {
-      log.info(`[${this.currentSource.sourceName}] Chart folder [${folderName}]: [${files.map(file => file.name).join(', ')}]`)
+      log.info(`[${this.currentSource.sourceName}] Chart folder [${cli.green(folderName)}]: [${files.map(file => cli.cyan(file.name)).join(', ')}]`)
       const filesHash = this.getFilesHash(files)
       this.results[this.currentSource.sourceDriveID][filesHash] = {
         source: this.currentSource,

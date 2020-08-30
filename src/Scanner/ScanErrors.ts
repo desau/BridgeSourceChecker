@@ -22,7 +22,9 @@ export async function saveAllErrors() {
     }
   }
 
-  const scannedSources = sources.slice(sources.length - scanSettings.onlyScanLastXSources, sources.length)
+  const oslxs = scanSettings.onlyScanLastXSources
+  const firstScannedSourceIndex = oslxs && oslxs > 0 ? sources.length - oslxs : 0
+  const scannedSources = sources.slice(firstScannedSourceIndex, sources.length)
   const sourceDriveIDs = [...new Set(scannedSources.map(source => source.sourceDriveID))]
 
   for (const sourceDriveID of sourceDriveIDs) {

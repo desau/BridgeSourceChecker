@@ -12,7 +12,7 @@ export const scanSettings = getSettings({
   rescanAllVersions: true,
 
   /** Instead of scanning all of sources.json, only scan the last X added sources (use 0 to scan all sources) */
-  onlyScanLastXSources: 2,
+  onlyScanLastXSources: 0,
 
   /** Files larger than this number of megabytes will not be downloaded from Google Drive (anything too large will crash when unzipping) */
   maxDownloadSizeMB: 3000,
