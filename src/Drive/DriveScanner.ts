@@ -2,7 +2,7 @@ import { readDriveFolder, readDriveFile, DriveFileResponse } from './DriveAdapte
 import { createHash } from 'crypto'
 import { yellow } from 'cli-color'
 import { log, lower } from '../UtilFunctions'
-import { DriveMap, DriveSource } from './scanDataInterface'
+import { DriveChart, DriveMap, DriveSource } from './scanDataInterface'
 import { scanSettings } from '../../config/scanConfig'
 import * as cli from 'cli-color'
 
@@ -34,6 +34,10 @@ export class DriveScanner {
         await this.scanDriveItem(source.sourceDriveID, source.sourceName, await readDriveFile(source.sourceDriveID), true)
       } else {
         await this.walkDriveDirectory(source.sourceDriveID, source.sourceName)
+      }
+
+      if (scanSettings.maxDownloadsPerDrive >= 0) {
+        this.filterOutOldResults()
       }
     }
 
@@ -139,5 +143,33 @@ export class DriveScanner {
   private getFilesHash(files: DriveFileResponse[]) {
     const md5s = files.map(file => file.md5Checksum)
     return createHash('md5').update(md5s.sort().join()).digest('hex')
+  }
+
+  private filterOutOldResults() {
+    const amountToKeep = scanSettings.maxDownloadsPerDrive
+    const sourceDriveID = this.currentSource.sourceDriveID
+    const sourceCharts = Object.values(this.results[sourceDriveID])
+    const timedSourceCharts = sourceCharts.map(sourceChart => {
+      return { latestTime: this.getLatestTime(sourceChart), ...sourceChart }
+    })
+    const sortedResults = timedSourceCharts.sort((a, b) => a.latestTime - b.latestTime)
+    const len = sortedResults.length
+    const keptResults = amountToKeep >= len ? sortedResults : sortedResults.slice(len - amountToKeep, len)
+    this.results[sourceDriveID] = {}
+    for (const result of keptResults) {
+      this.results[sourceDriveID][result.filesHash] = result
+    }
+  }
+
+  private getLatestTime(driveChart: DriveChart) {
+    let max = Number.MIN_SAFE_INTEGER
+    for (const file of driveChart.files) {
+      const thisDate = new Date(file.modifiedTime).getTime()
+      if (max < thisDate) {
+        max = thisDate
+      }
+    }
+
+    return max
   }
 }

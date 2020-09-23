@@ -61,7 +61,7 @@ export async function scanNewDownloads(chartsToScan: DriveMap) {
       }
     }
 
-    if (driveChartCount < scanSettings.minimumChartCount) {
+    if (driveChartCount < scanSettings.minimumChartCount && scanSettings.maxDownloadsPerDrive >= driveChartCount) {
       if (chartsToScan[driveID][Object.keys(chartsToScan[driveID])[0]] != undefined) {
         scanErrors.push({
           type: SeriousErrorTypes.notEnoughCharts,

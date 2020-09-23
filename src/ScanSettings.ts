@@ -26,6 +26,9 @@ export interface ScanSettings {
 
   /** If the number of errors in a source is greater than or equal to this, it is put in the "ManyErrors" folder instead of the "FewErrors" folder */
   seriousErrorThreshold: number
+
+  /** Maximum number of charts to download per drive, or -1 for no limit */
+  maxDownloadsPerDrive: number
 }
 
 const defaultSettings: ScanSettings = {
@@ -35,7 +38,8 @@ const defaultSettings: ScanSettings = {
   rescanAllVersions: false,
   onlyScanLastXSources: undefined,
   minimumChartCount: 5,
-  seriousErrorThreshold: 3
+  seriousErrorThreshold: 3,
+  maxDownloadsPerDrive: -1
 }
 
 /**

@@ -21,5 +21,8 @@ export const scanSettings = getSettings({
   minimumChartCount: 5,
 
   /** If the number of errors in a source is greater than or equal to this, it is put in the "ManyErrors" folder instead of the "FewErrors" folder */
-  seriousErrorThreshold: 3
+  seriousErrorThreshold: 3,
+
+  /** Maximum number of charts to download per drive, or -1 for no limit */
+  maxDownloadsPerDrive: -1
 })
