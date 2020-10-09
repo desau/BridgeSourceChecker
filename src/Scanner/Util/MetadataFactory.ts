@@ -204,7 +204,9 @@ export class MetadataFactory {
       'multiplier_note', 'video_start_time']
     this.extractMetadataField(this.extractMetadataInteger.bind(this), prefix, integers)
 
-    this.extractMetadataDecimal(prefix, 'delay')
+    // delay may be stored in .chart's "Offset" property in seconds
+    const decimals = [['offset', 'delay'], 'delay']
+    this.extractMetadataField(this.extractMetadataDecimal.bind(this), prefix, decimals)
 
     // Note: changing 'hopo_frequency', 'eighthnote_hopo', 'multiplier_note' will cause the score to be reset
     const booleans = ['modchart', 'eighthnote_hopo']
@@ -284,6 +286,8 @@ export class MetadataFactory {
     const value = (this.iniFile.song[prefix + iniField] + '').trim()
     if (!['', '0', '-1'].includes(value) && isNumber(value)) {
       this.metadata[metadataField] = Number(value)
+      // Assumes .chart "Offset" is in seconds, and is equivalent to .ini "delay" in milliseconds
+      if (iniField == 'offset') { this.metadata[metadataField] *= 1000 }
     }
   }
 
