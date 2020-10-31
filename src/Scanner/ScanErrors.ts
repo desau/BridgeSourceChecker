@@ -58,7 +58,7 @@ export async function saveAllErrors() {
     const errorPath = join(errorFolder, sanitizeFilename(thisSource.sourceName) + '.txt')
 
     log.info(`Writing to [${errorPath}]`)
-    await writeFile(errorPath, driveErrorText, { flag: 'a' })
+    await writeFile(errorPath, driveErrorText, { flag: 'w' })
   }
 }
 
