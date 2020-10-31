@@ -45,10 +45,11 @@ export async function saveAllErrors() {
 
     let errorFolder: string
     const seriousErrors = driveErrors.filter(error => error.type >= ERROR_TYPE_BORDER)
+    const hasNotEnoughCharts = seriousErrors.some(error => error.type == SeriousErrorTypes.notEnoughCharts)
 
     if (driveErrors.length == 0) {
       errorFolder = NO_ERRORS_PATH
-    } else if (seriousErrors.length >= scanSettings.seriousErrorThreshold) {
+    } else if (seriousErrors.length >= scanSettings.seriousErrorThreshold || hasNotEnoughCharts) {
       errorFolder = MANY_ERRORS_PATH
     } else {
       errorFolder = FEW_ERRORS_PATH

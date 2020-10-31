@@ -62,13 +62,11 @@ export async function scanNewDownloads(chartsToScan: DriveMap) {
     }
 
     if (driveChartCount < scanSettings.minimumChartCount && scanSettings.maxDownloadsPerDrive >= driveChartCount) {
-      if (chartsToScan[driveID][Object.keys(chartsToScan[driveID])[0]] != undefined) {
-        scanErrors.push({
-          type: SeriousErrorTypes.notEnoughCharts,
-          chart: chartsToScan[driveID][Object.keys(chartsToScan[driveID])[0]],
-          description: `This source has fewer than ${scanSettings.minimumChartCount} charts.`,
-        })
-      }
+      scanErrors.push({
+        type: SeriousErrorTypes.notEnoughCharts,
+        chart: chartsToScan[driveID][Object.keys(chartsToScan[driveID])[0]],
+        description: `This source has fewer than ${scanSettings.minimumChartCount} charts.`,
+      })
     }
   }
 
