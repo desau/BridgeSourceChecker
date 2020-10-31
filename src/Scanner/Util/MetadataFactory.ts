@@ -17,6 +17,7 @@ import { RegularErrorTypes, defaultMetadata, SeriousErrorTypes } from '../chartD
 export class MetadataFactory {
 
   iniFile: IIniObject | null = null             // The js_ini object with parsed data from the song.ini file
+  chartFile: IIniObject | null = null           // The js_ini object with parsed data from the notes.chart file
   metadata = Object.assign({}, defaultMetadata) // Contains the metadata from the song.ini file
 
   /**
@@ -42,7 +43,7 @@ export class MetadataFactory {
    * Sets `this.metadata` to the metadata provided in `this.filepath` (either from song.ini or notes.chart).
    */
   private setSongMetadata() {
-    this.setIniFile()
+    this.setIniFiles()
 
     if (this.iniFile.song == undefined) {
       scanErrors.push({
@@ -61,15 +62,21 @@ export class MetadataFactory {
   /**
    * Sets `this.iniFile` to a js_ini object that represents the metadata for this version.
    */
-  private setIniFile() {
+  private setIniFiles() {
     const iniPath = this.getIniFile()
     const chartPath = this.getChartFile()
 
+    if (chartPath != null) {
+      this.chartFile = this.getIniAtFilepath(chartPath, true)
+      this.iniFile = this.chartFile // Use chart file if iniPath is null
+    }
+
     if (iniPath != null) {
-      this.setIniAtFilepath(iniPath, false)
-    } else if (chartPath != null) {
-      this.setIniAtFilepath(chartPath, true)
-    } else {
+      this.iniFile = this.getIniAtFilepath(iniPath, false)
+    }
+
+
+    if (iniPath == null && chartPath == null) {
       scanErrors.push({
         type: SeriousErrorTypes.noMetadata,
         chart: this.driveChart,
@@ -149,7 +156,7 @@ export class MetadataFactory {
    * Sets `this.iniFile` to the js_ini object that can be derived from `fullPath`.
    * @param removeQuotes If quotes appear around .ini values (true for .chart, false for .ini).
    */
-  private setIniAtFilepath(fullPath: string, removeQuotes: boolean) {
+  private getIniAtFilepath(fullPath: string, removeQuotes: boolean) {
     let buffer: Buffer
     try {
       buffer = fs.readFileSync(fullPath)
@@ -175,7 +182,7 @@ export class MetadataFactory {
       throw new Error()
     }
 
-    this.iniFile = parse(buffer.toString(encoding), { autoTyping: false, removeQuotes: removeQuotes, nothrow: true })
+    const iniFile = parse(buffer.toString(encoding), { autoTyping: false, removeQuotes: removeQuotes, nothrow: true })
 
     if (this.iniFile[$Errors] != undefined) {
       for (const err of this.iniFile[$Errors]) {
@@ -186,6 +193,8 @@ export class MetadataFactory {
         })
       }
     }
+
+    return iniFile
   }
 
   /**
@@ -204,9 +213,11 @@ export class MetadataFactory {
       'multiplier_note', 'video_start_time']
     this.extractMetadataField(this.extractMetadataInteger.bind(this), prefix, integers)
 
-    // delay may be stored in .chart's "Offset" property in seconds
+    // delay may be stored in .chart's "Offset" property in seconds, equivalent to .ini "delay" in milliseconds
+    // Unlike most properties, CH reads the value from the .chart file when it's set to default in the .ini file
     const decimals = [['offset', 'delay'], 'delay']
     this.extractMetadataField(this.extractMetadataDecimal.bind(this), prefix, decimals)
+    if (this.metadata.delay == 0) { this.metadata.delay = Number(this.chartFile.song['offset'] + '') * 1000 }
 
     // Note: changing 'hopo_frequency', 'eighthnote_hopo', 'multiplier_note' will cause the score to be reset
     const booleans = ['modchart', 'eighthnote_hopo']
@@ -286,8 +297,6 @@ export class MetadataFactory {
     const value = (this.iniFile.song[prefix + iniField] + '').trim()
     if (!['', '0', '-1'].includes(value) && isNumber(value)) {
       this.metadata[metadataField] = Number(value)
-      // Assumes .chart "Offset" is in seconds, and is equivalent to .ini "delay" in milliseconds
-      if (iniField == 'offset') { this.metadata[metadataField] *= 1000 }
     }
   }
 
