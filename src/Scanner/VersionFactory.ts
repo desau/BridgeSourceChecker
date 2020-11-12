@@ -30,7 +30,7 @@ export class VersionFactory {
     if (metadata == null) {
       return null
     }
-    newFactory.chartName = `"${metadata.name}" - "${metadata.artist}" (${metadata.charter})`
+    newFactory.chartName = `"${metadata.artist}" - "${metadata.name}" (${metadata.charter})`
 
     newFactory.checkImages()
     newFactory.checkExtraFiles()
