@@ -11,6 +11,7 @@ import { red } from 'cli-color'
 import { SingleBar, Presets } from 'cli-progress'
 import { scanErrors } from './ScanErrors'
 import { scanSettings } from '../../config/scanConfig'
+import * as sources from '../../config/sources.json'
 
 export let errorBuffer: string[] = []
 
@@ -61,10 +62,24 @@ export async function scanNewDownloads(chartsToScan: DriveMap) {
       }
     }
 
-    if (driveChartCount < scanSettings.minimumChartCount && scanSettings.maxDownloadsPerDrive >= driveChartCount) {
+    if (driveChartCount < scanSettings.minimumChartCount && (scanSettings.maxDownloadsPerDrive >= driveChartCount || scanSettings.maxDownloadsPerDrive == -1)) {
+      const oslxs = scanSettings.onlyScanLastXSources
+      const firstScannedSourceIndex = oslxs && oslxs > 0 ? sources.length - oslxs : 0
+      const scannedSources = sources.slice(firstScannedSourceIndex, sources.length)
+      const source = scannedSources.find(source => source.sourceDriveID == driveID)
+      const placeholderChart: DriveChart = {
+        source: source,
+        folderID: source.sourceDriveID,
+        folderName: source.sourceName,
+        downloadPath: '...',
+        files: [],
+        filesHash: '...',
+        isArchive: false
+      }
+
       scanErrors.push({
         type: SeriousErrorTypes.notEnoughCharts,
-        chart: chartsToScan[driveID][Object.keys(chartsToScan[driveID])[0]],
+        chart: chartsToScan[driveID][Object.keys(chartsToScan[driveID])[0]] ?? placeholderChart,
         description: `This source has fewer than ${scanSettings.minimumChartCount} charts.`,
       })
     }
