@@ -87,7 +87,7 @@ export async function scanNewDownloads(chartsToScan: DriveMap) {
 
   progressBar.stop()
 
-  log.error(...errorBuffer)
+  log.error(errorBuffer.join('\n'))
   errorBuffer = []
 }
 

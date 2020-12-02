@@ -14,10 +14,13 @@ export enum RegularErrorTypes {
   albumSize,
 
   /** delay property in song.ini is not zero */
-  nonzeroDelay
+  nonzeroDelay,
+
+  /** offset property in notes.chart is not zero */
+  nonzeroOffset
 }
 
-export const ERROR_TYPE_BORDER = 5 // Number of elements in RegularErrorTypes
+export const ERROR_TYPE_BORDER = 6 // Number of elements in RegularErrorTypes
 
 export enum SeriousErrorTypes {
 
@@ -129,6 +132,7 @@ export interface SongMetadata {
   eighthnote_hopo: boolean
   multiplier_note: number
   video_start_time: number
+  __debugDelayIsOffset?: boolean
 }
 
 export const defaultMetadata: SongMetadata = {

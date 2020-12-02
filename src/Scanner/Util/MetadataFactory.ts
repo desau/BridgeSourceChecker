@@ -184,8 +184,8 @@ export class MetadataFactory {
 
     const iniFile = parse(buffer.toString(encoding), { autoTyping: false, removeQuotes: removeQuotes, nothrow: true })
 
-    if (this.iniFile[$Errors] != undefined) {
-      for (const err of this.iniFile[$Errors]) {
+    if (iniFile[$Errors] != undefined) {
+      for (const err of iniFile[$Errors]) {
         scanErrors.push({
           type: RegularErrorTypes.invalidIniLine,
           chart: this.driveChart,
@@ -217,7 +217,10 @@ export class MetadataFactory {
     // Unlike most properties, CH reads the value from the .chart file when it's set to default in the .ini file
     const decimals = [['offset', 'delay'], 'delay']
     this.extractMetadataField(this.extractMetadataDecimal.bind(this), prefix, decimals)
-    if (this.metadata.delay == 0) { this.metadata.delay = Number(this.chartFile.song['offset'] + '') * 1000 }
+    if (this.metadata.delay == 0) {
+      this.metadata.delay = Number(this.chartFile.song['offset'] + '') * 1000
+      this.metadata.__debugDelayIsOffset = true
+    }
 
     // Note: changing 'hopo_frequency', 'eighthnote_hopo', 'multiplier_note' will cause the score to be reset
     const booleans = ['modchart', 'eighthnote_hopo']

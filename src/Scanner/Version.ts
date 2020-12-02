@@ -107,11 +107,12 @@ export class Version {
     }
 
     if (m.delay != 0) {
+      const ofs = m.__debugDelayIsOffset
       scanErrors.push({
-        type: RegularErrorTypes.nonzeroDelay,
+        type: ofs ? RegularErrorTypes.nonzeroOffset : RegularErrorTypes.nonzeroDelay,
         chart: this.driveData,
         chartText: this.chartName,
-        description: 'The delay property in the song.ini is not zero.'
+        description: `The ${ofs ? 'offset' : 'delay'} property in the ${ofs ? 'notes.chart' : 'song.ini'} file is not zero.`
       })
     }
   }
