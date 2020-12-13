@@ -29,7 +29,7 @@ export class Version {
     /** An array of filenames that are included in `filepath` */
     public files: fs.Dirent[]
   ) {
-    this.chartName = `"${this.metadata.name}" - "${this.metadata.artist}" (${this.metadata.charter})`
+    this.chartName = `"${this.metadata.artist}" - "${this.metadata.name}" (${this.metadata.charter})`
   }
 
   // Initialized during downloadCharts()
