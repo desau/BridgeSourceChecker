@@ -25,7 +25,7 @@ export const ERROR_TYPE_BORDER = 6 // Number of elements in RegularErrorTypes
 export enum SeriousErrorTypes {
 
   /** The source has fewer than scanSettings.minimumChartCount */
-  notEnoughCharts = 5, // different value from RegularErrorTypes
+  notEnoughCharts = 6, // different value from RegularErrorTypes
 
   /** The chart contains broken notes */
   brokenNotes,
