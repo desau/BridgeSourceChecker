@@ -213,12 +213,14 @@ export class MetadataFactory {
       'multiplier_note', 'video_start_time']
     this.extractMetadataField(this.extractMetadataInteger.bind(this), prefix, integers)
 
-    // delay may be stored in .chart's "Offset" property in seconds, equivalent to .ini "delay" in milliseconds
-    // Unlike most properties, CH reads the value from the .chart file when it's set to default in the .ini file
     this.extractMetadataDecimal(prefix, 'delay')
+    if (this.chartFile != null) { // If a .chart file exists, get the "Offset" property
+      this.metadata.chartOffset = Number(this.chartFile.song['offset'] + '') * 1000
+    }
     if (this.metadata.delay == 0) {
-      this.metadata.delay = Number(this.chartFile.song['offset'] + '') * 1000
-      this.metadata.__debugDelayIsOffset = true
+      // delay may be stored in .chart's "Offset" property in seconds, equivalent to .ini "delay" in milliseconds
+      // Unlike most properties, CH reads the value from the .chart file when it's set to default in the .ini file
+      this.metadata.delay = this.metadata.chartOffset
     }
 
     // Note: changing 'hopo_frequency', 'eighthnote_hopo', 'multiplier_note' will cause the score to be reset

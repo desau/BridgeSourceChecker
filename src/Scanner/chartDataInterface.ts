@@ -132,7 +132,7 @@ export interface SongMetadata {
   eighthnote_hopo: boolean
   multiplier_note: number
   video_start_time: number
-  __debugDelayIsOffset?: boolean
+  chartOffset: number // pulled from the .chart file, if it exists
 }
 
 export const defaultMetadata: SongMetadata = {
@@ -161,7 +161,8 @@ export const defaultMetadata: SongMetadata = {
   'hopo_frequency': 0,
   'eighthnote_hopo': false,
   'multiplier_note': 0,
-  'video_start_time': 0
+  'video_start_time': 0,
+  'chartOffset': 0
 }
 
 export interface ChartData {
