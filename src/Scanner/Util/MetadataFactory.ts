@@ -189,7 +189,7 @@ export class MetadataFactory {
         scanErrors.push({
           type: RegularErrorTypes.invalidIniLine,
           chart: this.driveChart,
-          description: err.message
+          description: err.message.substr(0, 1000)
         })
       }
     }
