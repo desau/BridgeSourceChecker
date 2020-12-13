@@ -215,8 +215,7 @@ export class MetadataFactory {
 
     // delay may be stored in .chart's "Offset" property in seconds, equivalent to .ini "delay" in milliseconds
     // Unlike most properties, CH reads the value from the .chart file when it's set to default in the .ini file
-    const decimals = [['offset', 'delay'], 'delay']
-    this.extractMetadataField(this.extractMetadataDecimal.bind(this), prefix, decimals)
+    this.extractMetadataDecimal(prefix, 'delay')
     if (this.metadata.delay == 0) {
       this.metadata.delay = Number(this.chartFile.song['offset'] + '') * 1000
       this.metadata.__debugDelayIsOffset = true
