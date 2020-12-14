@@ -24,16 +24,7 @@ export class DriveSync {
    */
   async scanSources() {
     if (scanSettings.clipboardLinksMode) {
-      while (true) {
-        const sourceDriveIDs = this.readDriveLinks()
-        g.sources = sourceDriveIDs.map(driveID => { return { sourceDriveID: driveID, sourceName: driveID } })
-        if (g.sources.length == 0) {
-          log.error('Input did not contain any drive IDs.')
-        } else {
-          log.info(`${g.sources.length} source link${g.sources.length == 1 ? '' : 's'} detected.`)
-          break
-        }
-      }
+      g.sources = this.getSourcesFromClipboard()
     }
     this.compareSources(readFileSync(DRIVE_SCAN_DATA_PATH), await new DriveScanner(g.sources).scanDrive())
     this.saveRemovedVersions()
@@ -44,12 +35,34 @@ export class DriveSync {
    * Reads text containing drive links from the clipboard.
    * @returns a list of the drive IDs in those links.
    */
-  private readDriveLinks() {
-    keyInPause('Copy text containing one or more drive links to the clipboard, then press any key...', { guide: false })
-    const input = clipboardy.readSync()
-    const resultsWithSlash = input.match(/\/1[a-zA-Z0-9_-]{10,}/ug) ?? []
-    const plainResults = resultsWithSlash.map(result => result.substr(1))
-    return plainResults
+  private getSourcesFromClipboard() {
+      while (true) {
+        keyInPause('Copy text containing one or more drive links to the clipboard, then press any key...', { guide: false })
+        const input = clipboardy.readSync()
+        const resultsWithSlash = input.match(/\/1[a-zA-Z0-9_-]{10,}/ug) ?? []
+        const sourceDriveIDs = resultsWithSlash.map(result => result.substr(1))
+        const sources = sourceDriveIDs.map(driveID => { return { sourceDriveID: driveID, sourceName: driveID } })
+        if (sources.length == 0) {
+          log.error('Input did not contain any drive IDs.')
+        } else {
+          log.info(`${sources.length} source link${sources.length == 1 ? '' : 's'} detected.`)
+
+          // Code specific to #to-review to try to auto-detect source names
+          const contextFragments = input.split('/1')
+          for (const source of sources) {
+            for (const fragment of contextFragments) {
+              if (fragment.startsWith(source.sourceDriveID.substr(1))) {
+                const result = fragment.match(/anything else convenient\.\s+([^\n]*)\s+/u)
+                if (result != null && result[1].trim() != '') {
+                  source.sourceName = result[1].trim()
+                }
+              }
+            }
+          }
+
+          return sources
+        }
+      }
   }
 
   /**
