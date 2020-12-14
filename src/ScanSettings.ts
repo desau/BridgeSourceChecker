@@ -12,6 +12,9 @@ export interface ScanSettings {
   /** The folder where downloaded charts should be saved */
   downloadsFilepath: string
 
+  /** If the program should pull drive links from the clipboard instead of sources.json */
+  clipboardLinksMode: boolean
+
   /** Files larger than this number of megabytes will not be downloaded from Google Drive (anything too large will crash when unzipping) */
   maxDownloadSizeMB: number
 
@@ -34,6 +37,7 @@ export interface ScanSettings {
 const defaultSettings: ScanSettings = {
   logLevel: LogLevel.INFO,
   downloadsFilepath: './ChartDownloads',
+  clipboardLinksMode: false,
   maxDownloadSizeMB: 3000000000,
   rescanAllVersions: false,
   onlyScanLastXSources: undefined,
@@ -47,5 +51,9 @@ const defaultSettings: ScanSettings = {
  * @returns A `ScanSettings` object containing the settings that should be used for this scan.
  */
 export function getSettings(options: Partial<ScanSettings> = defaultSettings): ScanSettings {
-  return Object.assign({}, defaultSettings, options)
+  const settings = Object.assign({}, defaultSettings, options)
+  if (settings.clipboardLinksMode) {
+    settings.onlyScanLastXSources = undefined
+  }
+  return settings
 }

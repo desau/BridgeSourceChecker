@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { initDriveAuth } from './Drive/DriveAdapter'
 import { failDrive, failRead } from './ErrorFunctions'
+import * as sourcesJSON from '../Config/sources.json'
 import * as dotenv from 'dotenv'
 import { DriveMap } from './Drive/scanDataInterface'
 import { DriveSync } from './Drive/DriveSync'
@@ -10,6 +11,8 @@ import { ChartsDownloader } from './Download/ChartDownloader'
 import { scanNewDownloads } from './Scanner/LibraryScanner'
 import { saveAllErrors, scanErrors, getErrorText } from './Scanner/ScanErrors'
 dotenv.config()
+
+export const g = { sources: sourcesJSON } // global constant
 
 void main()
 

@@ -1,8 +1,11 @@
-import * as sources from '../../Config/sources.json'
 import { DriveScanner } from './DriveScanner'
 import { DriveFile, DriveMap, ChartMap, DRIVE_SCAN_DATA_PATH, VERSIONS_TO_REMOVE_PATH } from './scanDataInterface'
 import { writeFileSync, readFileSync } from 'jsonfile'
+import { log } from '../UtilFunctions'
+import * as clipboardy from 'clipboardy'
+import { keyInPause } from 'readline-sync'
 import { scanSettings } from '../../config/scanConfig'
+import { g } from '../main'
 
 export class DriveSync {
 
@@ -20,9 +23,33 @@ export class DriveSync {
    * @throws an exception if the results failed to save to `./scanData/`
    */
   async scanSources() {
-    this.compareSources(readFileSync(DRIVE_SCAN_DATA_PATH), await new DriveScanner(sources).scanDrive())
+    if (scanSettings.clipboardLinksMode) {
+      while (true) {
+        const sourceDriveIDs = this.readDriveLinks()
+        g.sources = sourceDriveIDs.map(driveID => { return { sourceDriveID: driveID, sourceName: driveID } })
+        if (g.sources.length == 0) {
+          log.error('Input did not contain any drive IDs.')
+        } else {
+          log.info(`${g.sources.length} source link${g.sources.length == 1 ? '' : 's'} detected.`)
+          break
+        }
+      }
+    }
+    this.compareSources(readFileSync(DRIVE_SCAN_DATA_PATH), await new DriveScanner(g.sources).scanDrive())
     this.saveRemovedVersions()
     return this.simplifyDriveMap(this.chartsToScan)
+  }
+
+  /**
+   * Reads text containing drive links from the clipboard.
+   * @returns a list of the drive IDs in those links.
+   */
+  private readDriveLinks() {
+    keyInPause('Copy text containing one or more drive links to the clipboard, then press any key...', { guide: false })
+    const input = clipboardy.readSync()
+    const resultsWithSlash = input.match(/\/1[a-zA-Z0-9_-]{10,}/ug) ?? []
+    const plainResults = resultsWithSlash.map(result => result.substr(1))
+    return plainResults
   }
 
   /**

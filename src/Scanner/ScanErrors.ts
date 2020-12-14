@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/indent */
 import { ChartError, RegularErrorTypes, ERROR_TYPE_BORDER, SeriousErrorTypes } from './chartDataInterface'
 import { sanitizeFilename, log } from '../UtilFunctions'
-import * as sources from '../../config/sources.json'
 import { promisify } from 'util'
 import { MANY_ERRORS_PATH, NO_ERRORS_PATH, FEW_ERRORS_PATH } from '../Drive/scanDataInterface'
 import { join } from 'path'
 import * as fs from 'fs'
 import { scanSettings } from '../../config/scanConfig'
+import { g } from '../main'
 
 const writeFile = promisify(fs.writeFile)
 
@@ -23,8 +23,8 @@ export async function saveAllErrors() {
   }
 
   const oslxs = scanSettings.onlyScanLastXSources
-  const firstScannedSourceIndex = oslxs && oslxs > 0 ? sources.length - oslxs : 0
-  const scannedSources = sources.slice(firstScannedSourceIndex, sources.length)
+  const firstScannedSourceIndex = oslxs && oslxs > 0 ? g.sources.length - oslxs : 0
+  const scannedSources = g.sources.slice(firstScannedSourceIndex, g.sources.length)
   const sourceDriveIDs = [...new Set(scannedSources.map(source => source.sourceDriveID))]
 
   for (const sourceDriveID of sourceDriveIDs) {

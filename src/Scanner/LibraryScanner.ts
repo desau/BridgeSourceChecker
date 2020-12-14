@@ -11,7 +11,7 @@ import { red } from 'cli-color'
 import { SingleBar, Presets } from 'cli-progress'
 import { scanErrors } from './ScanErrors'
 import { scanSettings } from '../../config/scanConfig'
-import * as sources from '../../config/sources.json'
+import { g } from '../main'
 
 export let errorBuffer: string[] = []
 
@@ -64,8 +64,8 @@ export async function scanNewDownloads(chartsToScan: DriveMap) {
 
     if (driveChartCount < scanSettings.minimumChartCount && (scanSettings.maxDownloadsPerDrive >= driveChartCount || scanSettings.maxDownloadsPerDrive == -1)) {
       const oslxs = scanSettings.onlyScanLastXSources
-      const firstScannedSourceIndex = oslxs && oslxs > 0 ? sources.length - oslxs : 0
-      const scannedSources = sources.slice(firstScannedSourceIndex, sources.length)
+      const firstScannedSourceIndex = oslxs && oslxs > 0 ? g.sources.length - oslxs : 0
+      const scannedSources = g.sources.slice(firstScannedSourceIndex, g.sources.length)
       const source = scannedSources.find(source => source.sourceDriveID == driveID)
       const placeholderChart: DriveChart = {
         source: source,

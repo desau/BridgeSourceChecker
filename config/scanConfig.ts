@@ -8,6 +8,9 @@ export const scanSettings = getSettings({
   /** The folder where downloaded charts should be saved */
   downloadsFilepath: './ChartDownloads',
 
+  /** If the program should pull drive links from the clipboard instead of sources.json */
+  clipboardLinksMode: false,
+
   /** Scan all charts detected in sources, even if they have already been scanned before (may add duplicate lines to ScanErrors) */
   rescanAllVersions: true,
 
