@@ -106,7 +106,7 @@ export class Version {
       })
     }
 
-    if (m.delay != 0) {
+    if (!m._debugDelayWasZero) {
       scanErrors.push({
         type: RegularErrorTypes.nonzeroDelay,
         chart: this.driveData,

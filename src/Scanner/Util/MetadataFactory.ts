@@ -220,6 +220,7 @@ export class MetadataFactory {
     if (this.metadata.delay == 0) {
       // delay may be stored in .chart's "Offset" property in seconds, equivalent to .ini "delay" in milliseconds
       // Unlike most properties, CH reads the value from the .chart file when it's set to default in the .ini file
+      this.metadata._debugDelayWasZero = true
       this.metadata.delay = this.metadata.chartOffset
     }
 
