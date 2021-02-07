@@ -39,8 +39,8 @@ export class DriveSync {
       while (true) {
         keyInPause('Copy text containing one or more drive links to the clipboard, then press any key...', { guide: false })
         const input = clipboardy.readSync()
-        const resultsWithSlash = input.match(/\/[01][a-zA-Z0-9_-]{10,}/ug) ?? []
-        const sourceDriveIDs = resultsWithSlash.map(result => result.substr(1))
+        const resultsWithSlash = input.match(/(?:\/|\?id=)[01][a-zA-Z0-9_-]{10,}/ug) ?? []
+        const sourceDriveIDs = resultsWithSlash.map(result => result.startsWith('?id=') ? result.substr(4) : result.substr(1))
         const sources = sourceDriveIDs.map(driveID => { return { sourceDriveID: driveID, sourceName: driveID } })
         if (sources.length == 0) {
           log.error('Input did not contain any drive IDs.')
