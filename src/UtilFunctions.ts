@@ -93,6 +93,13 @@ export function hasChartExtension(name: string) {
 }
 
 /**
+ * @returns `true` if `name` has a .chart file extension.
+ */
+export function hasDotChartOnlyExtension(name: string) {
+  return ('.chart' == parse(lower(name)).ext)
+}
+
+/**
  * @returns `true` if `name` is a valid chart filename.
  */
 export function hasChartName(name: string) {

@@ -5,7 +5,7 @@
 import * as fs from 'fs'
 import{ join, basename } from 'path'
 import { parse, $Errors, IIniObject } from './js_ini'
-import { isNumber, isBoolean, lower, getEncoding, removeStyleTags, hasChartExtension, hasIniExtension, hasChartName, hasIniName } from '../../UtilFunctions'
+import { isNumber, isBoolean, lower, getEncoding, removeStyleTags, hasIniExtension, hasChartName, hasIniName, hasDotChartOnlyExtension } from '../../UtilFunctions'
 import { failOpen } from '../../ErrorFunctions'
 import { DriveChart } from '../../Drive/scanDataInterface'
 import { scanErrors } from '../ScanErrors'
@@ -137,7 +137,7 @@ export class MetadataFactory {
     let lastChartPath: string = null
 
     for (const file of this.files) {
-      if (hasChartExtension(file.name)) {
+      if (hasDotChartOnlyExtension(file.name)) {
         lastChartPath = join(this.filepath, file.name)
         if (hasChartName(file.name)) {
           bestChartPath = join(this.filepath, file.name)
