@@ -7,7 +7,7 @@ import { Version } from './Version'
 import { failScan, failRead } from '../ErrorFunctions'
 import { log } from '../UtilFunctions'
 import { DriveMap, DriveChart } from '../Drive/scanDataInterface'
-import { red } from 'cli-color'
+import { cyan, red } from 'cli-color'
 import { SingleBar, Presets } from 'cli-progress'
 import { scanErrors } from './ScanErrors'
 import { scanSettings } from '../../config/scanConfig'
@@ -20,6 +20,7 @@ export let errorBuffer: string[] = []
  * @returns an array of `Version` objects that should be synced with the database.
  */
 export async function scanNewDownloads(chartsToScan: DriveMap) {
+  const downloadedVersions: Version[] = []
 
   errorBuffer = []
   let lastScannedName = ''
@@ -52,13 +53,8 @@ export async function scanNewDownloads(chartsToScan: DriveMap) {
           // Commented out for testing
           // await newVersion.checkAlbumArt()
           newVersion.addAdditionalErrors()
+          downloadedVersions.push(newVersion)
         }
-      } else {
-        errorBuffer.push(
-          `${red('Error:')} downloaded chart(s) failed to be parsed into a version object [${chartToScan.downloadPath}]\n`,
-          `DOWNLOADED FROM ${chartToScan.source.sourceName}:`,
-          ...chartToScan.files.map(file => `${file.name}: ${file.webContentLink}`)
-        )
       }
     }
 
@@ -89,6 +85,8 @@ export async function scanNewDownloads(chartsToScan: DriveMap) {
 
   log.error(errorBuffer.join('\n'))
   errorBuffer = []
+
+  return downloadedVersions
 }
 
 class LibraryScanner {
@@ -170,10 +168,13 @@ class LibraryScanner {
       return
     }
 
-    // Add version to `results` if it is a valid chart
-    const newVersion = await VersionFactory.construct(filepath, files, driveChart)
-    if (newVersion != null) {
+    try {
+      // Add version to `results` if it is a valid chart
+      const newVersion = await VersionFactory.construct(filepath, files, driveChart)
       this.results.push(newVersion)
+    } catch (e) {
+      errorBuffer.push(`[${cyan(driveChart.source.sourceName)}] ` + red('Failed to parse chart: ') + e)
+      errorBuffer.push(`https://drive.google.com/drive/folders/${driveChart.folderID}\n`)
     }
   }
 

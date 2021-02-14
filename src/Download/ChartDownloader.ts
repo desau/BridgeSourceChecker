@@ -9,11 +9,10 @@ import * as node7z from 'node-7z'
 import * as zipBin from '7zip-bin'
 import { failWrite, failDownload, failUnzip, failDelete } from '../ErrorFunctions'
 import { extractRar } from './RarExtractor'
-import { green } from 'cli-color'
+import { cyan, green, red } from 'cli-color'
 import { DriveChart, DriveFile, DRIVE_SCAN_DATA_PATH, DriveMap, VERSIONS_TO_SCAN_PATH } from '../Drive/scanDataInterface'
 import { getDownloadStream } from '../Drive/DriveAdapter'
 import { SingleBar, MultiBar, Presets } from 'cli-progress'
-import { red } from 'cli-color'
 import * as readline from 'readline-sync'
 import { log, sanitizeFilename, hasVideoExtension } from '../UtilFunctions'
 import * as mkdirp from 'mkdirp'
@@ -39,7 +38,7 @@ export class ChartsDownloader {
       for (const filesHash of Object.keys(chartsToScan[driveID])) {
         const chartToScan = chartsToScan[driveID][filesHash]
         currentCount++
-        log.info(`Downloading chart ${green(`[${currentCount}/${totalCount}]`)}...`)
+        log.info(`Downloading chart ${green(`[${currentCount}/${totalCount}]`)}... ${cyan(`[${chartToScan.source.sourceName}]`)}`)
 
         if (chartToScan.downloadPath == null) {
           try {

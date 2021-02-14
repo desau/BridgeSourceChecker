@@ -21,14 +21,15 @@ export class VersionFactory {
   /**
    * @param filepath The path to a version's folder.
    * @param files The list of files inside the folder, as `fs.Dirent[]` objects.
-   * @returns a new `Version` object (or `null` if the chart was not able to be scanned).
+   * @returns a new `Version` object.
+   * @throws a string error description if the chart was not able to be scanned.
    */
   static async construct(filepath: string, files: fs.Dirent[], driveChart: DriveChart) {
     const newFactory = new VersionFactory(filepath, files, driveChart)
 
     const metadata = MetadataFactory.construct(filepath, files, driveChart)
     if (metadata == null) {
-      return null
+      throw `"${driveChart.isArchive ? driveChart.files[0]?.name ?? driveChart.folderName : driveChart.folderName}" has missing metadata.`
     }
     newFactory.chartName = `"${metadata.artist}" - "${metadata.name}" (${metadata.charter})`
 
@@ -38,8 +39,10 @@ export class VersionFactory {
     const hasValidChart = newFactory.hasValidChart()
     const chartData = await newFactory.getChartData()
 
-    if (!hasValidChart || metadata == null || chartData == null) {
-      return null
+    if (!hasValidChart) {
+      throw newFactory.chartName + ' has a missing chart file.'
+    } else if (chartData == null) {
+      throw newFactory.chartName + ' has an invalid chart file.'
     } else {
       return new Version(filepath, metadata, chartData, files)
     }
