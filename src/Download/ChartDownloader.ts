@@ -192,11 +192,9 @@ class ChartDownloader {
     if (useRarExtractor) {
       try {
         await extractRar(source, this.destinationFolder)
-        return
       } catch (e) {
         failUnzip(source, e)
         readline.keyInPause('Extraction failed. Extract manually, then press any key to continue.')
-        void this.extractDownload(fileName, extname(fileName) == '.rar')
       }
     } else {
       const stream = node7z.extractFull(source, this.destinationFolder, { $progress: true , $bin: zipBin.path7za })
