@@ -44,13 +44,15 @@ export async function extractRar(sourceFile: string, destinationFolder: string) 
   // Set file modification times (because unrarjs didn't feel like handling that automatically)
   const headers = fileList[1].fileHeaders
   for (const header of headers) {
-    try {
-      const fd = await open(join(destinationFolder, header.name), 'r+')
-      const time = new Date(header.time)
-      await futimes(fd, time, time)
-      await close(fd)
-    } catch (e) {
-      throw new Error(`Failed to update the last modified times:\n${e}`)
+    if (!header.flags.directory) {
+      try {
+        const fd = await open(join(destinationFolder, header.name), 'r+')
+        const time = new Date(header.time)
+        await futimes(fd, time, time)
+        await close(fd)
+      } catch (e) {
+        throw new Error(`Failed to update the last modified times:\n${e}`)
+      }
     }
   }
 }
