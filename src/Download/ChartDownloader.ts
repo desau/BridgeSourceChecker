@@ -38,7 +38,8 @@ export class ChartsDownloader {
       for (const filesHash of Object.keys(chartsToScan[driveID])) {
         const chartToScan = chartsToScan[driveID][filesHash]
         currentCount++
-        log.info(`Downloading chart ${green(`[${currentCount}/${totalCount}]`)}... ${cyan(`[${chartToScan.source.sourceName}]`)}`)
+        const downloadName = `[${chartToScan.source.sourceName}]:[${chartToScan.isArchive ? chartToScan.files[0].name : chartToScan.folderName}]`
+        log.info(`Downloading chart ${green(`[${currentCount}/${totalCount}]`)}... ${cyan(downloadName)}`)
 
         if (chartToScan.downloadPath == null) {
           try {
