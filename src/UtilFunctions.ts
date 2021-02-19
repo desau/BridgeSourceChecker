@@ -195,7 +195,8 @@ export function removeStyleTags(text: string) {
   let newText = text
   do {
     oldText = newText
-    newText = newText.replace(/<\s*[^>]+>(.*)<\s*\/\s*[^>]+>/g, '$1')
+    newText = newText.replace(/<\s*[^>]+>(.*?)<\s*\/\s*[^>]+>/g, '$1')
+    newText = newText.replace(/<\s*\/\s*[^>]+>(.*?)<\s*[^>]+>/g, '$1')
   } while (newText != oldText)
   return newText
 }
