@@ -7,6 +7,8 @@ import { join } from 'path'
 import * as fs from 'fs'
 import { scanSettings } from '../../config/scanConfig'
 import { g } from '../main'
+import { Version } from './Version'
+import { cyan, green, red } from 'cli-color'
 
 const writeFile = promisify(fs.writeFile)
 
@@ -68,4 +70,31 @@ export async function saveAllErrors() {
 export function getErrorText(error: ChartError) {
   return `["${error.chart.folderName}" at https://drive.google.com/drive/folders/${error.chart.folderID}] (${error.chart.source.sourceName})\n` +
   `[${RegularErrorTypes[error.type]}] for ${error.chartText}: ${error.description}`
+}
+
+export function printFolderRenames(versions: Version[]) {
+
+  const sourceGroups: Version[][] = []
+  for (const version of versions) {
+    const matchingGroup = sourceGroups.find(sourceGroup => sourceGroup[0].driveData.source.sourceDriveID == version.driveData.source.sourceDriveID)
+    if (matchingGroup != undefined) {
+      matchingGroup.push(version)
+    } else {
+      sourceGroups.push([version])
+    }
+  }
+
+  log.info(red(`SHORTCUT NAME${sourceGroups.length > 1 ? 'S' : ''}:`))
+  for (const sourceGroup of sourceGroups) {
+    const charterNames = []
+    for (const version of sourceGroup) {
+      if (!charterNames.includes(version.metadata.charter)) {
+        charterNames.push(version.metadata.charter)
+      }
+    }
+
+    // CharterA's Charts (CharterB, CharterC)
+    const name = `${charterNames[0]}'s Charts${charterNames.length > 1 ? ` (${charterNames.slice(1).join(', ')})` : ''}`
+    log.info(`${cyan(sourceGroup[0].driveData.source.sourceName)} => ${green(name)}`)
+  }
 }
