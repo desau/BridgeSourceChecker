@@ -37,7 +37,7 @@
     "loglevelnext": "^4.0.1",
     "midifile": "^2.0.0",
     "node-7z": "^2.1.1",
-    "node-unrar-js": "^0.8.1",
+    "node-unrar-js": "^1.0.1",
     "readline-sync": "^1.4.10",
     "sanitize-filename": "^1.6.3",
     "sharp": "^0.26.0",
