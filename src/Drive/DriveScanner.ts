@@ -110,13 +110,14 @@ export class DriveScanner {
       } else {
         log.info(`[${this.currentSource.sourceName}] Archive: ${item.name}`)
       }
-      this.results[this.currentSource.sourceDriveID][item.md5Checksum] = {
+      const filesHash = this.getFilesHash([item])
+      this.results[this.currentSource.sourceDriveID][filesHash] = {
         source: this.currentSource,
         isArchive: true,
         downloadPath: null,
         folderName: folderName,
         folderID: parentFolderID,
-        filesHash: item.md5Checksum,
+        filesHash: filesHash,
         files: [item]
       }
     } else if (item.fullFileExtension != undefined) {
@@ -141,7 +142,7 @@ export class DriveScanner {
    * @returns an MD5 hash of all the files in `files`.
    */
   private getFilesHash(files: DriveFileResponse[]) {
-    const md5s = files.map(file => file.md5Checksum)
+    const md5s = files.map(file => file.md5Checksum + file.name)
     return createHash('md5').update(md5s.sort().join()).digest('hex')
   }
 
