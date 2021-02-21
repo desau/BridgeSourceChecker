@@ -48,7 +48,7 @@ export class DriveSync {
           log.info(`${sources.length} source link${sources.length == 1 ? '' : 's'} detected.`)
 
           // Code specific to #to-review to try to auto-detect source names
-          const contextFragments = input.split('/1')
+          const contextFragments = input.split(/(?:\/|\?id=)[01]/)
           for (const source of sources) {
             for (const fragment of contextFragments) {
               if (fragment.startsWith(source.sourceDriveID.substr(1))) {
