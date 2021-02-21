@@ -149,7 +149,7 @@ class ChartDownloader {
 
     const downloadStream = await getDownloadStream(file.id)
 
-    const filePath = join(this.destinationFolder, file.name)
+    const filePath = join(this.destinationFolder, sanitizeFilename(file.name))
     try {
       downloadStream.pipe(fs.createWriteStream(filePath))
     } catch (err) { failWrite(filePath, err); throw new Error() }
