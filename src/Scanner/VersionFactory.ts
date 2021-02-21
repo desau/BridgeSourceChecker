@@ -168,7 +168,7 @@ export class VersionFactory {
       if (hasImageExtension(file.name)) { continue }
       if (hasChartExtension(file.name)) { continue }
       if (hasAudioExtension(file.name)) { continue }
-      if (['preview.ogg', 'preview.mp3', 'preview.wav'].includes(lower(file.name))) { continue }
+      if (['preview.ogg', 'preview.mp3', 'preview.wav', 'preview.opus'].includes(lower(file.name))) { continue }
       if (hasIniExtension(file.name)) { continue }
       if (hasVideoExtension(file.name)) { continue }
 

@@ -134,7 +134,7 @@ export class DriveScanner {
   private appearsToBeChartFolder(extensions: string[]) {
     const ext = extensions.map(extension => lower(extension))
     const containsNotes = (ext.includes('chart') || ext.includes('mid'))
-    const containsAudio = (ext.includes('ogg') || ext.includes('mp3') || ext.includes('wav'))
+    const containsAudio = (ext.includes('ogg') || ext.includes('mp3') || ext.includes('wav') || ext.includes('opus'))
     return (containsNotes || containsAudio)
   }
 

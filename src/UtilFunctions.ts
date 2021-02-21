@@ -74,7 +74,7 @@ export function isBoolean(value: string) {
  */
 export function hasAudioExtension(name: string) {
   const file = parse(lower(name))
-  return (['.ogg', '.mp3', '.wav'].includes(file.ext) && file.name != 'preview')
+  return (['.ogg', '.mp3', '.wav', '.opus'].includes(file.ext) && file.name != 'preview')
 }
 
 /**
