@@ -34,6 +34,16 @@ Downloading from Google Drive requires authentication with Google. Setting up Oa
 
 ## Adding Sources
 
+There are two ways of defining sources. I recommend the fast way, using `clipboardLinksMode`.
+
+### Clipboard Links Mode
+
+Set `clipboardLinksMode` to true in `config/scanConfig.ts`. After running the program, copy any number of drive links to the clipboard, then press any key to continue and the sources will be parsed from the clipboard contents.
+
+### Manually Define sources.json
+
+Set `clipboardLinksMode` to false in `config/scanConfig.ts`.
+
 When you run the code, it will download and scan all sources defined in `config/sources.json`. The format looks like this:
 ```
 [
