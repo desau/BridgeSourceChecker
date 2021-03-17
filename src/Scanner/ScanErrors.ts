@@ -85,6 +85,7 @@ export function printFolderRenames(versions: Version[]) {
   }
 
   log.info(red(`SHORTCUT NAME${sourceGroups.length > 1 ? 'S' : ''}:`))
+  let hasMultipleChartersInSource = false
   for (const sourceGroup of sourceGroups) {
     const charterNames = []
     for (const version of sourceGroup) {
@@ -92,9 +93,18 @@ export function printFolderRenames(versions: Version[]) {
         charterNames.push(version.metadata.charter)
       }
     }
+    if (charterNames.length > 1) {
+      hasMultipleChartersInSource = true
+    }
 
     // CharterA's Charts (CharterB, CharterC)
     const name = `${charterNames[0]}'s Charts${charterNames.length > 1 ? ` (${charterNames.slice(1).join(', ')})` : ''}`
     log.info(`${cyan(sourceGroup[0].driveData.source.sourceName)} => ${green(name)}`)
+  }
+  if (hasMultipleChartersInSource) {
+    log.info(red(`Text in parentheses after "<Charter>'s Charts" is the list of all other charters in this source.`))
+    log.info(red(`Remember that this is not allowed, with only a couple exceptions. If the source is accepted, please`))
+    log.info(red(`reformat the shortcut name to remove alternate spellings of a username and any charters who have`))
+    log.info(red(`not given their permission for their charts to be hosted in this source.`))
   }
 }
