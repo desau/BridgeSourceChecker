@@ -52,16 +52,16 @@ When you run the code, it will download and scan all sources defined in `config/
     "sourceDriveID": "1_GBVYvNxye9u2jcoLJtcxaBpddodlj-r"
   },
   {
-    "sourceName": "CharterB's Charts",
-    "sourceDriveID": "1GMWUS_9lttQktzTeek1J14rFfFI16pFG"
-  },
-  {
     "isDriveFileSource": true,
     "setlistIcon": "cb",
     "sourceName": "Circuit Breaker",
     "sourceDriveID": "1krVV155twWAOvh_uaGYHnY93fbpvwiae"
   },
   ...
+  {
+    "sourceName": "CharterB's Charts",
+    "sourceDriveID": "1GMWUS_9lttQktzTeek1J14rFfFI16pFG"
+  }
 ]
 ```
 `sourceName` is the name for this source. ScanErrors for this source will be saved under `ScanErrors/<sourceName>.txt`
