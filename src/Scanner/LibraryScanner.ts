@@ -76,6 +76,7 @@ export async function scanNewDownloads(chartsToScan: DriveMap) {
       scanErrors.push({
         type: SeriousErrorTypes.notEnoughCharts,
         chart: chartsToScan[driveID][Object.keys(chartsToScan[driveID])[0]] ?? placeholderChart,
+        chartText: source.sourceName,
         description: `This source has fewer than ${scanSettings.minimumChartCount} charts.`,
       })
     }
