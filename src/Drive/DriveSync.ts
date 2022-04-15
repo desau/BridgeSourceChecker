@@ -52,7 +52,7 @@ export class DriveSync {
           for (const source of sources) {
             for (const fragment of contextFragments) {
               if (fragment.startsWith(source.sourceDriveID.substr(1))) {
-                const result = fragment.match(/anything else convenient\.\s+([^\n]*)\s+/u)
+                const result = fragment.match(/us from messaging you\.\s+([^\n]*)\s+/u)
                 if (result != null && result[1].trim() != '') {
                   source.sourceName = result[1].trim()
                 }
