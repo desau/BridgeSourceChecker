@@ -88,6 +88,7 @@ export async function parseChartFile(filepath: string): Promise<ChartData> {
   const lastNoteIndex = noteIndexes.lastNoteIndex
   const brokenNotes = getBrokenNotes(firstNotesSectionIndex, lines, eventsMeta.sections)
   const notes = getAllNotes(firstNotesSectionIndex, lines)
+  const sustainsWithNoGaps = getSustainsWithNoGaps(firstNotesSectionIndex, lines)
 
   const tempoMap = getTempoMap(lines)
 
@@ -121,6 +122,7 @@ export async function parseChartFile(filepath: string): Promise<ChartData> {
     hasStarPower: notesMeta.hasStarPower,
     hasForced: notesMeta.hasForced,
     hasTap: notesMeta.hasTap,
+    sustainsWithNoGaps: sustainsWithNoGaps,
     hasOpen,
     hasSoloSections: notesMeta.hasSoloSections,
     hasLyrics: eventsMeta.hasLyrics,
@@ -256,6 +258,52 @@ export async function parseChartFile(filepath: string): Promise<ChartData> {
     }
     return notes
 
+  }
+
+
+
+  function getSustainsWithNoGaps(notesIndex: number, lines: string[]) {
+    const noteSustains = {}
+    const sustainsWithNoGaps = []
+    let currentStatus
+
+    for (let i = notesIndex; i < lines.length; i++) {
+      const line = lines[i]
+
+      // Detect new difficulty
+      if (diffMap[line]) {
+        currentStatus = diffMap[line]
+        noteSustains[currentStatus] = {}
+      }
+      // Detect new notes and record any sustains.  Note that we track sustains separately for each note
+      // to support extended sustains.
+      const [, index, note, sustain] = /(\d+) = N ([0-4]|7|8) (\d+)/.exec(line) || []
+      if (note && currentStatus) {
+        if (!noteSustains[currentStatus][notesMap[note]]) {
+          noteSustains[currentStatus][notesMap[note]] = []
+        }
+        noteSustains[currentStatus][notesMap[note]].push({offset:index, sustain:sustain})
+      }
+    }
+
+    for (const noteLane in noteSustains[currentStatus]) {
+      const laneNotes = noteSustains[currentStatus][noteLane]
+      let previousSustainEnd = 0
+      for (let i = 0; i < laneNotes.length; i++) {
+        if (previousSustainEnd > 0) {
+          if (Number(laneNotes[i].offset == previousSustainEnd)) {
+            sustainsWithNoGaps.push(previousSustainEnd)
+          }
+        }
+        if (laneNotes[i].sustain) {
+          previousSustainEnd = Number(laneNotes[i].offset) + Number(laneNotes[i].sustain)
+        } else {
+          previousSustainEnd = 0
+        }
+      }
+    }
+
+    return sustainsWithNoGaps
   }
 
   function getHasOpenNotes(notesIndex: number, lines: string[]) {

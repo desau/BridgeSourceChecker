@@ -17,7 +17,10 @@ export enum RegularErrorTypes {
   nonzeroDelay,
 
   /** offset property in notes.chart is not zero */
-  nonzeroOffset
+  nonzeroOffset,
+
+  /** some sustains have no gaps before the next note */
+  sustainsWithNoGaps
 }
 
 export const ERROR_TYPE_BORDER = 6 // Number of elements in RegularErrorTypes
@@ -172,6 +175,7 @@ export interface ChartData {
   hasStarPower: boolean
   hasForced: boolean
   hasTap: boolean
+  sustainsWithNoGaps: Array<number>
   hasOpen: {
     [instrument: string]: boolean
   }

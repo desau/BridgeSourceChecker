@@ -97,6 +97,15 @@ export class Version {
       })
     }
 
+    if (cd.sustainsWithNoGaps.length > 0) {
+      scanErrors.push({
+        type: RegularErrorTypes.sustainsWithNoGaps,
+        chart: this.driveData,
+        chartText: this.chartName,
+        description: `This chart has ${cd.sustainsWithNoGaps.length} sustained notes with no gaps before the next note.`
+      })
+    }
+
     if (this.driveData.source.setlistIcon != undefined && this.metadata.icon != this.driveData.source.setlistIcon) {
       scanErrors.push({
         type: RegularErrorTypes.metadataFix,

@@ -47,6 +47,7 @@ export async function parseMidiFile(filepath: string): Promise<ChartData> {
     hasOpen = {},
     notes = {}
 
+  const sustainsWithNoGaps = []
   const brokenNotes = []
 
   // Detect 120 BPM charts
@@ -70,6 +71,7 @@ export async function parseMidiFile(filepath: string): Promise<ChartData> {
   return {
     hasSections, hasStarPower, hasForced, hasSoloSections,
     hasTap, hasOpen, noteCounts, is120, hasLyrics,
+    sustainsWithNoGaps,
     hasBrokenNotes: !!brokenNotes.length,
     length: lastNoteTime / 1000 >> 0,
     effectiveLength: (lastNoteTime - firstNoteTime) / 1000 >> 0
