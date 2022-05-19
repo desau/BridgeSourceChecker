@@ -175,7 +175,7 @@ export interface ChartData {
   hasStarPower: boolean
   hasForced: boolean
   hasTap: boolean
-  sustainsWithNoGaps: Array<number>
+  sustainsWithNoGaps: number[]
   hasOpen: {
     [instrument: string]: boolean
   }

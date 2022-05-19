@@ -238,21 +238,21 @@ export async function parseChartFile(filepath: string): Promise<ChartData> {
 
   function getAllNotes(notesIndex: number, lines: string[]) {
     const notes = {}
-    let currentStatus
+    let currentDifficulty: string
     for (let i = notesIndex; i < lines.length; i++) {
       const line = lines[i]
-      if (/N 7 /.exec(line) && currentStatus) {
-        hasOpen[currentStatus.slice(0, currentStatus.indexOf('.'))] = true
+      if (/N 7 /.exec(line) && currentDifficulty) {
+        hasOpen[currentDifficulty.slice(0, currentDifficulty.indexOf('.'))] = true
       }
       // Detect new difficulty
       if (diffMap[line]) {
-        currentStatus = diffMap[line]
-        notes[currentStatus] = {}
+        currentDifficulty = diffMap[line]
+        notes[currentDifficulty] = {}
       }
       // Detect new notes
       const [, index, note] = /(\d+) = N ([0-4]|7|8) /.exec(line) || []
-      if (note && currentStatus) {
-        notes[currentStatus][index] = `${(notes[currentStatus][index] || '')}${notesMap[note]}`
+      if (note && currentDifficulty) {
+        notes[currentDifficulty][index] = `${(notes[currentDifficulty][index] || '')}${notesMap[note]}`
       }
 
     }
@@ -260,34 +260,29 @@ export async function parseChartFile(filepath: string): Promise<ChartData> {
 
   }
 
-
-
   function getSustainsWithNoGaps(notesIndex: number, lines: string[]) {
     const noteSustains = {}
     const sustainsWithNoGaps = []
-    let currentStatus
+    let currentDifficulty: string
 
     for (let i = notesIndex; i < lines.length; i++) {
       const line = lines[i]
 
       // Detect new difficulty
       if (diffMap[line]) {
-        currentStatus = diffMap[line]
-        noteSustains[currentStatus] = {}
+        currentDifficulty = diffMap[line]
+        noteSustains[currentDifficulty] = {}
       }
-      // Detect new notes and record any sustains.  Note that we track sustains separately for each note
+      // Detect new notes and record any sustains. Note that we track sustains separately for each note
       // to support extended sustains.
       const [, index, note, sustain] = /(\d+) = N ([0-4]|7|8) (\d+)/.exec(line) || []
-      if (note && currentStatus) {
-        if (!noteSustains[currentStatus][notesMap[note]]) {
-          noteSustains[currentStatus][notesMap[note]] = []
-        }
-        noteSustains[currentStatus][notesMap[note]].push({offset:index, sustain:sustain})
+      if (note && currentDifficulty) {
+        (noteSustains[currentDifficulty][notesMap[note]] ??= []).push({offset:index, sustain:sustain})
       }
     }
 
-    for (const noteLane in noteSustains[currentStatus]) {
-      const laneNotes = noteSustains[currentStatus][noteLane]
+    for (const noteLane in noteSustains[currentDifficulty]) {
+      const laneNotes = noteSustains[currentDifficulty][noteLane]
       let previousSustainEnd = 0
       for (let i = 0; i < laneNotes.length; i++) {
         if (previousSustainEnd > 0) {
@@ -309,22 +304,22 @@ export async function parseChartFile(filepath: string): Promise<ChartData> {
   function getHasOpenNotes(notesIndex: number, lines: string[]) {
     const hasOpen = {}
     const notes = {}
-    let currentStatus
+    let currentDifficulty: string
 
     for (let i = notesIndex; i < lines.length; i++) {
       const line = lines[i]
-      if (/N 7 /.exec(line) && currentStatus) {
-        hasOpen[currentStatus.slice(0, currentStatus.indexOf('.'))] = true
+      if (/N 7 /.exec(line) && currentDifficulty) {
+        hasOpen[currentDifficulty.slice(0, currentDifficulty.indexOf('.'))] = true
       }
       // Detect new difficulty
       if (diffMap[line]) {
-        currentStatus = diffMap[line]
-        notes[currentStatus] = {}
+        currentDifficulty = diffMap[line]
+        notes[currentDifficulty] = {}
       }
       // Detect new notes
       const [, index, note] = /(\d+) = N ([0-4]|7|8) /.exec(line) || []
-      if (note && currentStatus) {
-        notes[currentStatus][index] = `${(notes[currentStatus][index] || '')}${notesMap[note]}`
+      if (note && currentDifficulty) {
+        notes[currentDifficulty][index] = `${(notes[currentDifficulty][index] || '')}${notesMap[note]}`
       }
 
     }
@@ -334,7 +329,7 @@ export async function parseChartFile(filepath: string): Promise<ChartData> {
 
   function getNoteIndexes(notesIndex: number, lines: string[]) {
     const notes = {}
-    let currentStatus
+    let currentDifficulty: string
     let firstNoteIndex = 0
     let lastNoteIndex = 0
     let previous
@@ -344,15 +339,15 @@ export async function parseChartFile(filepath: string): Promise<ChartData> {
 
       // Detect new difficulty
       if (diffMap[line]) {
-        currentStatus = diffMap[line]
-        notes[currentStatus] = {}
+        currentDifficulty = diffMap[line]
+        notes[currentDifficulty] = {}
       }
       // Detect new notes
       const [, index, note] = /(\d+) = N ([0-4]|7|8) /.exec(line) || []
-      if (note && currentStatus) {
+      if (note && currentDifficulty) {
         if (!firstNoteIndex) firstNoteIndex = +index
         if (+index > lastNoteIndex) lastNoteIndex = +index
-        notes[currentStatus][index] = `${(notes[currentStatus][index] || '')}${notesMap[note]}`
+        notes[currentDifficulty][index] = `${(notes[currentDifficulty][index] || '')}${notesMap[note]}`
       }
       if (+index && (!previous || previous.index != index)) previous = { index, note }
     }
@@ -362,7 +357,7 @@ export async function parseChartFile(filepath: string): Promise<ChartData> {
   function getBrokenNotes(notesIndex: number, lines: string[], sections: {index: number; section: string}[]) {
     const notes = {}
     const brokenNotes = []
-    let currentStatus
+    let currentDifficulty: string
     let previous
 
     for (let i = notesIndex; i < lines.length; i++) {
@@ -370,8 +365,8 @@ export async function parseChartFile(filepath: string): Promise<ChartData> {
 
       // Detect new difficulty
       if (diffMap[line]) {
-        currentStatus = diffMap[line]
-        notes[currentStatus] = {}
+        currentDifficulty = diffMap[line]
+        notes[currentDifficulty] = {}
       }
       // Detect new notes
       const [, index, note] = /(\d+) = N ([0-4]|7|8) /.exec(line) || []
